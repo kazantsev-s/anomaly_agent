@@ -11,72 +11,74 @@
 
 ### Подготовка
 
-#### Файл `.env`
-
 1. Скопировать `.env.example` в `.env`:
 
-**Mac/Linux:**
+    *Mac/Linux:*
     
-```bash
-cp .env.example .env
-```
+    ```bash
+    cp .env.example .env
+    ```
 
-**Windows:**
+    *Windows:*
   
-```bash
-copy .env.example .env
-```
+    ```bash
+    copy .env.example .env
+    ```
 
 2. Вставить реальный `TG_TOKEN` в `.env`.
 
+3. Указать пароль для БД в `POSTGRES_PASSWORD`
+
 ### Запуск контейнеров
 
-#### Запуск PostgreSQL
+Далее этапы запуска через docker compose
+
+### Запуск PostgreSQL
 
 1. Запуск контейнера PostgreSQL:
-```bash
-docker compose -f docker-compose.db.yaml up -d
-```
+
+    ```bash
+    docker compose -f docker-compose.db.yaml up -d
+    ```
 
 2. Посмотреть логи базы:
 
-```bash
-docker compose -f docker-compose.db.yaml logs -f db
-```
+    ```bash
+    docker compose -f docker-compose.db.yaml logs -f db
+    ```
 
 3. Проверить статус:
 
-```bash
-docker compose -f docker-compose.db.yaml ps
-```
+    ```bash
+    docker compose -f docker-compose.db.yaml ps
+    ```
 
 4. Подключиться к базе данных:
 
-  Используйте значения `.env`
-  
-  По умолчанию:
-  
-  - Host: `localhost`
-  - Port: 5432
-  - Database: `kolesa`
-  - User: `kolesa`
-  - Password: `установленный_в_.env`
+    Используйте значения `.env`
+    По умолчанию:
+   
+      - Host: `localhost`
+      - Port: 5432
+      - Database: `kolesa`
+      - User: `kolesa`
+      - Password: `установленный_в_.env`
 
-5. Остановить контейнер с БД
+6. Остановить контейнер с БД
 
-Обычная остановка:
+    Обычная остановка:
+    
+    ```bash
+    docker compose -f docker-compose.db.yaml down
+    ```
 
-```bash
-docker compose -f docker-compose.db.yaml down
-```
+    Удалить базу вместе с данными:
+    
+    ```bash
+    docker compose -f docker-compose.db.yaml down -v
+    ```
 
-Удалить базу вместе с данными:
-
-```bash
-docker compose -f docker-compose.db.yaml down -v
-```
-
-#### Запуск остальных сервисов
+### Запуск остальных сервисов
 
 Может выполняться независимо от запуска БД
 
@@ -91,7 +93,7 @@ docker compose up --build
 docker compose up --build -d
 ```
 
-2. Посмотреть логи запущенных в фоне контейнеров:
+2. Посмотреть логи:
 
 ```bash
 docker compose logs -f
