@@ -15,6 +15,8 @@ class Settings:
         self.log_format = os.getenv('LOG_FORMAT')
         self.kolesa_table_sql_path = os.getenv('KOLESA_TABLE_SQL_PATH')
         self.kolesa_csv_path = os.getenv('KOLESA_CSV_PATH')
+        self.openai_api_key = os.getenv('OPENAI_API_KEY')
+        self.openai_model = os.getenv('OPENAI_MODEL', 'gpt-5.5')
 
 
 def get_settings():

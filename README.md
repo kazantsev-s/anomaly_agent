@@ -80,12 +80,18 @@ docker compose -f docker-compose.db.yaml down -v
 
 Может выполняться независимо от запуска БД
 
-1. Запуск контейнера:
+1. Запуск контейнера с выводом логов в терминал:
 ```bash
 docker compose up --build
 ```
 
-2. Посмотреть логи:
+Фоновый запуск:
+
+```bash
+docker compose up --build -d
+```
+
+2. Посмотреть логи запущенных в фоне контейнеров:
 
 ```bash
 docker compose logs -f
