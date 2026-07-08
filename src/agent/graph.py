@@ -1,13 +1,21 @@
 from langgraph.graph import END, START, StateGraph
 
-from agent.nodes import call_openai
+from agent.nodes import generate_sql_query, execute_sql, answer
 from agent.state import AgentState
 
 graph_builder = StateGraph(AgentState)
 
 # Собираем граф агента (ноды и связи между ними)
-graph_builder.add_node('call_openai', call_openai)
-graph_builder.add_edge(START, 'call_openai')
-graph_builder.add_edge('call_openai', END)
+
+# Инициализация нод
+graph_builder.add_node('generate_sql_query', generate_sql_query)
+graph_builder.add_node('execute_sql', execute_sql)
+graph_builder.add_node('answer', answer)
+
+# Связи между нодами
+graph_builder.add_edge(START, 'generate_sql_query')
+graph_builder.add_edge('generate_sql_query', 'execute_sql')
+graph_builder.add_edge('execute_sql', 'answer')
+graph_builder.add_edge('answer', END)
 
 agent_graph = graph_builder.compile()

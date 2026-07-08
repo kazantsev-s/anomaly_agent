@@ -83,30 +83,33 @@
 Может выполняться независимо от запуска БД
 
 1. Запуск контейнера с выводом логов в терминал:
-```bash
-docker compose up --build
-```
 
-Фоновый запуск:
+  Обычный запуск
 
-```bash
-docker compose up --build -d
-```
+  ```bash
+  docker compose up --build
+  ```
+
+  Фоновый запуск:
+
+  ```bash
+  docker compose up --build -d
+  ```
 
 2. Посмотреть логи:
 
-```bash
-docker compose logs -f
-```
+  ```bash
+  docker compose logs -f
+  ```
 
 3. Проверить статус:
 
-```bash
-docker compose ps
-```
+  ```bash
+  docker compose ps
+  ```
 
 4. Остановить контейнер:
 
-```bash
-docker compose down
-```
+  ```bash
+  docker compose down
+  ```

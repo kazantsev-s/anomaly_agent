@@ -43,6 +43,8 @@ async def ask_agent(message):
         logger.info(f'Вызов AI-агента')
         agent_result = await agent_graph.ainvoke({
             'prompt': user_prompt,
+            'sql_query': '',
+            'sql_result': '',
             'answer': '',
         })
     except Exception:
