@@ -5,6 +5,7 @@ from config import get_settings
 from db.postgres import init_db, ping_db
 from logger import init_logger
 from agent.graph import agent_graph
+from aiogram.enums import ParseMode
 
 dp = Dispatcher()
 logger = init_logger()
@@ -53,7 +54,7 @@ async def ask_agent(message):
         return
 
     logger.info(f'AI-агент вернул ответ')
-    await message.answer(agent_result['answer'])
+    await message.answer(agent_result['answer'], parse_mode=ParseMode.HTML)
 
 
 async def main():
