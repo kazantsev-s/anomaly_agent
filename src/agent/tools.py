@@ -61,13 +61,13 @@ def get_select_columns(schema: dict, extra_columns=None):
 
 # Вспомогательная функция для структуры результатов проверок
 
-def make_finding(anomaly_type: str, table_name: str, column_name: str, severity: str, count: int, reason: str, sample_rows=None, details=None):
+def make_finding(anomaly_type: str, table_name: str, column_name: str, importance: str, count: int, reason: str, sample_rows=None, details=None):
     # Единый формат результата
     return {
         'type': anomaly_type,
         'table': table_name,
         'column': column_name,
-        'severity': severity,
+        'importance': importance,
         'count': count,
         'reason': reason,
         'sample_rows': sample_rows or [],
@@ -215,7 +215,7 @@ async def check_missing_values(table_name: str):
     # Проверяем только важные колонки, т.к. есть и необязательные поля, по типу generation.
     for column_name in IMPORTANT_COLUMNS:
         column_info = profile['columns'][column_name]
-        severity = 'high' if column_name in ['kolesa_id', 'brand', 'model', 'year', 'price'] else 'medium'
+        importance = 'high' if column_name in ['kolesa_id', 'brand', 'model', 'year', 'price'] else 'medium'
 
         if column_info['null_count'] > 0:
             sample_rows = await get_sample_rows(
@@ -228,7 +228,7 @@ async def check_missing_values(table_name: str):
                 'missing_null',
                 table_name,
                 column_name,
-                severity,
+                importance,
                 column_info['null_count'],
                 f'В важной колонке {column_name} есть NULL-значения',
                 sample_rows,
@@ -246,7 +246,7 @@ async def check_missing_values(table_name: str):
                 'missing_empty_text',
                 table_name,
                 column_name,
-                severity,
+                importance,
                 column_info['empty_count'],
                 f'В важной текстовой колонке {column_name} есть пустые строки',
                 sample_rows,
@@ -487,7 +487,7 @@ async def check_logic_rules(table_name: str):
             'columns': ['found_img', 'img_url'],
             'column': 'found_img',
             'condition': f"found_img = false AND img_url IS NOT NULL AND {clean_text_sql('img_url')} <> ''",
-            'severity': 'medium',
+            'importance': 'medium',
             'reason': 'found_img = false, но ссылка на изображение заполнена',
         },
         {
@@ -495,7 +495,7 @@ async def check_logic_rules(table_name: str):
             'columns': ['found_img', 'img_url'],
             'column': 'found_img',
             'condition': f"found_img = true AND (img_url IS NULL OR {clean_text_sql('img_url')} = '')",
-            'severity': 'high',
+            'importance': 'high',
             'reason': 'found_img = true, но ссылка на изображение пустая',
         },
         {
@@ -503,7 +503,7 @@ async def check_logic_rules(table_name: str):
             'columns': ['imgs_count', 'found_img'],
             'column': 'imgs_count',
             'condition': 'imgs_count = 0 AND found_img = true',
-            'severity': 'medium',
+            'importance': 'medium',
             'reason': 'Количество фото равно 0, но флаг found_img показывает, что фото найдено',
         },
         {
@@ -511,7 +511,7 @@ async def check_logic_rules(table_name: str):
             'columns': ['imgs_count', 'found_img'],
             'column': 'imgs_count',
             'condition': 'imgs_count > 0 AND found_img = false',
-            'severity': 'medium',
+            'importance': 'medium',
             'reason': 'Количество фото больше 0, но found_img = false',
         },
         {
@@ -519,7 +519,7 @@ async def check_logic_rules(table_name: str):
             'columns': ['year', 'mileage'],
             'column': 'mileage',
             'condition': 'year >= EXTRACT(YEAR FROM CURRENT_DATE)::integer - 1 AND mileage > 200000',
-            'severity': 'medium',
+            'importance': 'medium',
             'reason': 'Очень свежий автомобиль имеет подозрительно большой пробег',
         },
     ]
@@ -538,7 +538,7 @@ async def check_logic_rules(table_name: str):
                 rule['name'],
                 table_name,
                 rule['column'],
-                rule['severity'],
+                rule['importance'],
                 count,
                 rule['reason'],
                 sample_rows,

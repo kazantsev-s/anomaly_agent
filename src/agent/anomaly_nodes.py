@@ -44,7 +44,7 @@ def sort_findings(findings: list[dict]) -> list[dict]:
     return sorted(
         findings,
         key=lambda finding: (
-            IMPORTANCE_ORDER.get(finding.get('IMPORTANCE'), 3),
+            IMPORTANCE_ORDER.get(finding.get('importance'), 3),
             -finding.get('count', 0),
             finding.get('type', ''),
         ),
@@ -163,17 +163,17 @@ async def final_anomaly_answer(state: AnomalyAgentState) -> AnomalyAgentState:
         }
 
     type_counts = Counter(get_finding_label(finding['type']) for finding in findings)
-    IMPORTANCE_counts = Counter(finding['IMPORTANCE'] for finding in findings)
+    importance_counts = Counter(finding['importance'] for finding in findings)
 
     lines.extend([
         '',
         '<b>По важности</b>',
     ])
 
-    for IMPORTANCE in ['high', 'medium', 'low']:
-        count = IMPORTANCE_counts.get(IMPORTANCE, 0)
+    for importance in ['high', 'medium', 'low']:
+        count = importance_counts.get(importance, 0)
         if count:
-            lines.append(f'{IMPORTANCE_LABELS[IMPORTANCE]}: {count}')
+            lines.append(f'{IMPORTANCE_LABELS[importance]}: {count}')
 
     lines.extend([
         '',
@@ -189,11 +189,11 @@ async def final_anomaly_answer(state: AnomalyAgentState) -> AnomalyAgentState:
     ])
 
     for finding in findings[:6]:
-        IMPORTANCE = IMPORTANCE_LABELS.get(finding.get('IMPORTANCE'), finding.get('IMPORTANCE'))
+        importance = IMPORTANCE_LABELS.get(finding.get('importance'), finding.get('importance'))
         column = finding.get('column') or 'таблица'
         lines.append(
             f"- <b>{format_value(column)}</b>: {format_value(finding['reason'])} "
-            f"({format_value(finding['count'])}, важность: {format_value(IMPORTANCE)})"
+            f"({format_value(finding['count'])}, важность: {format_value(importance)})"
         )
 
     lines.extend([
