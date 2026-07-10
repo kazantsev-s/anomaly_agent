@@ -4,6 +4,7 @@ from aiogram.filters import Command
 from config import get_settings
 from db.postgres import init_db, ping_db
 from logger import init_logger
+from agent.anomaly_graph import anomaly_agent_graph
 from agent.graph import agent_graph
 from aiogram.enums import ParseMode
 
@@ -54,6 +55,22 @@ async def ask_agent(message):
         return
 
     logger.info(f'AI-агент вернул ответ')
+    await message.answer(agent_result['answer'], parse_mode=ParseMode.HTML)
+
+
+@dp.message(Command('analyze'))
+async def analyze_table(message):
+    try:
+        logger.info('Вызов анализа аномалий')
+        agent_result = await anomaly_agent_graph.ainvoke({
+            'table_name': 'kolesa',
+            'answer': '',
+        })
+    except Exception:
+        logger.exception('Ошибка анализа аномалий')
+        await message.answer('Не удалось выполнить анализ аномалий')
+        return
+
     await message.answer(agent_result['answer'], parse_mode=ParseMode.HTML)
 
 
