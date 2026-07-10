@@ -1,20 +1,25 @@
 from collections import Counter
 from html import escape
+import json
+
+from openai import AsyncOpenAI
 
 from agent.state import AnomalyAgentState
 from agent.tools import get_schema, profile_table, run_standard_checks
+from config import get_settings
+from logger import init_logger
 
+
+logger = init_logger()
+
+
+REPORT_FINDINGS_LIMIT = 12
+REPORT_SAMPLE_ROWS_LIMIT = 3
 
 IMPORTANCE_ORDER = {
     'high': 0,
     'medium': 1,
     'low': 2,
-}
-
-IMPORTANCE_LABELS = {
-    'high': 'высокая',
-    'medium': 'средняя',
-    'low': 'низкая',
 }
 
 FINDING_TYPE_LABELS = {
@@ -35,9 +40,49 @@ FINDING_TYPE_LABELS = {
     'fresh_car_high_mileage': 'свежий автомобиль с большим пробегом',
 }
 
+ANOMALY_REPORT_SYSTEM_PROMPT = '''
+    Ты аналитик качества данных таблицы kolesa с объявлениями Kolesa.kz.
+    Отвечай на русском языке.
+
+    Сформируй короткий отчет для Telegram в HTML.
+    Используй только простые теги:
+    <b>жирный текст</b>
+    <i>курсив</i>
+    <code>код или значение</code>
+    <a href="https://example.com">ссылка</a>
+
+    Не используй Markdown:
+    - не пиши **жирный текст**
+    - не пиши ### заголовки
+    - не используй markdown-таблицы через |
+
+    Объясняй только аномалии из входного JSON.
+    Не придумывай новые findings, новые колонки, новые строки и новые причины.
+    Если findings пустой, напиши, что базовые проверки не нашли аномалий.
+    Держи ответ короче 3500 символов.
+
+    Структура ответа:
+    1. Краткое резюме.
+    2. Основные проблемы.
+    3. Детальные находки.
+    4. Что проверить вручную.
+    5. Итоговая оценка качества данных.
+'''
+
 
 def get_table_name(state: AnomalyAgentState) -> str:
     return state.get('table_name') or 'kolesa'
+
+
+def get_anomaly_openai_client() -> AsyncOpenAI:
+    logger.info(f'Вызов ноды get_anomaly_openai_client')
+    settings = get_settings()
+
+    if not settings.openai_api_key:
+        logger.error('API ключ к OpenAI не задан в переменных окружения')
+        raise ValueError('API ключ к OpenAI не задан в переменных окружения')
+
+    return AsyncOpenAI(api_key=settings.openai_api_key)
 
 
 def sort_findings(findings: list[dict]) -> list[dict]:
@@ -90,23 +135,110 @@ def format_sample_row(row: dict) -> str:
     return ', '.join(parts) if parts else format_value(row)
 
 
-def format_detail_values(finding: dict) -> list[str]:
-    details = finding.get('details') or {}
-    values = details.get('values') or details.get('duplicates') or []
-
-    return [
-        f"{format_value(row.get('value'))}: {format_value(row.get('count'))}"
-        for row in values[:3]
-    ]
-
-
 def get_finding_label(finding_type: str) -> str:
     return FINDING_TYPE_LABELS.get(finding_type, finding_type)
 
 
+def build_profile_summary(profile: dict) -> dict:
+    logger.info(f'Подготовка краткого профиля таблицы для LLM-отчета')
+    columns_summary = {}
+
+    for column_name, column_profile in (profile.get('columns') or {}).items():
+        summary = {
+            'data_type': column_profile.get('data_type'),
+            'null_count': column_profile.get('null_count', 0),
+            'unique_count': column_profile.get('unique_count', 0),
+        }
+
+        if column_profile.get('numeric_stats'):
+            summary['numeric_stats'] = column_profile['numeric_stats']
+
+        if column_profile.get('datetime_stats'):
+            summary['datetime_stats'] = column_profile['datetime_stats']
+
+        if 'empty_count' in column_profile:
+            summary['empty_count'] = column_profile.get('empty_count', 0)
+
+        if 'unknown_count' in column_profile:
+            summary['unknown_count'] = column_profile.get('unknown_count', 0)
+
+        if column_profile.get('top_values'):
+            summary['top_values'] = column_profile['top_values'][:5]
+
+        columns_summary[column_name] = summary
+
+    return {
+        'row_count': profile.get('row_count', 0),
+        'columns': columns_summary,
+    }
+
+
+def compact_sample_rows(sample_rows: list[dict]) -> list[dict]:
+    logger.info(f'Подготовка примеров строк для LLM-отчета')
+    rows = []
+
+    for row in sample_rows[:REPORT_SAMPLE_ROWS_LIMIT]:
+        rows.append({
+            'id': row.get('id'),
+            'kolesa_id': row.get('kolesa_id'),
+            'brand': row.get('brand'),
+            'model': row.get('model'),
+            'year': row.get('year'),
+            'mileage': row.get('mileage'),
+            'city': row.get('city'),
+            'price': row.get('price'),
+            'kolesa_url': row.get('kolesa_url'),
+            'text': format_sample_row(row),
+        })
+
+    return rows
+
+
+def build_report_input(state: AnomalyAgentState, findings: list[dict]) -> str:
+    logger.info(f'Подготовка входных данных для LLM-отчета')
+    schema = state.get('schema') or {}
+    profile = state.get('profile') or {}
+    top_findings = findings[:REPORT_FINDINGS_LIMIT]
+
+    report_data = {
+        'table_name': state.get('table_name') or 'kolesa',
+        'schema': {
+            'column_names': schema.get('column_names', []),
+            'numeric_columns': schema.get('numeric_columns', []),
+            'text_columns': schema.get('text_columns', []),
+            'datetime_columns': schema.get('datetime_columns', []),
+            'boolean_columns': schema.get('boolean_columns', []),
+        },
+        'profile_summary': build_profile_summary(profile),
+        'findings_total': len(findings),
+        'findings_in_report': len(top_findings),
+        'importance_counts': Counter(finding['importance'] for finding in findings),
+        'type_counts': Counter(get_finding_label(finding['type']) for finding in findings),
+        'findings': [
+            {
+                'type': finding.get('type'),
+                'label': get_finding_label(finding.get('type')),
+                'column': finding.get('column'),
+                'importance': finding.get('importance'),
+                'count': finding.get('count'),
+                'reason': finding.get('reason'),
+                'sample_rows': compact_sample_rows(finding.get('sample_rows') or []),
+                'details': finding.get('details') or {},
+            }
+            for finding in top_findings
+        ],
+    }
+
+    report_json = json.dumps(report_data, ensure_ascii=False, default=str)
+    logger.info(f'В LLM-отчет передано findings: {len(top_findings)} из {len(findings)}')
+    return report_json
+
+
 async def load_schema(state: AnomalyAgentState) -> AnomalyAgentState:
+    logger.info(f'Вызов ноды load_schema')
     table_name = get_table_name(state)
     schema = await get_schema(table_name)
+    logger.info(f'Схема таблицы {table_name} загружена')
 
     return {
         **state,
@@ -116,8 +248,10 @@ async def load_schema(state: AnomalyAgentState) -> AnomalyAgentState:
 
 
 async def profile_table_node(state: AnomalyAgentState) -> AnomalyAgentState:
+    logger.info(f'Вызов ноды profile_table_node')
     table_name = get_table_name(state)
     profile = await profile_table(table_name)
+    logger.info(f'Профиль таблицы {table_name} собран')
 
     return {
         **state,
@@ -126,8 +260,10 @@ async def profile_table_node(state: AnomalyAgentState) -> AnomalyAgentState:
 
 
 async def run_standard_checks_node(state: AnomalyAgentState) -> AnomalyAgentState:
+    logger.info(f'Вызов ноды run_standard_checks_node')
     table_name = get_table_name(state)
     standard_findings = await run_standard_checks(table_name)
+    logger.info(f'Базовые проверки нашли findings: {len(standard_findings)}')
 
     return {
         **state,
@@ -136,97 +272,31 @@ async def run_standard_checks_node(state: AnomalyAgentState) -> AnomalyAgentStat
 
 
 async def merge_findings(state: AnomalyAgentState) -> AnomalyAgentState:
+    logger.info(f'Вызов ноды merge_findings')
+    all_findings = list(state.get('standard_findings') or [])
+    logger.info(f'Итоговый список findings содержит записей: {len(all_findings)}')
+
     return {
         **state,
-        'all_findings': list(state.get('standard_findings') or []),
+        'all_findings': all_findings,
     }
 
 
 async def final_anomaly_answer(state: AnomalyAgentState) -> AnomalyAgentState:
-    profile = state.get('profile') or {}
+    logger.info(f'Вызов ноды final_anomaly_answer')
     findings = sort_findings(state.get('all_findings') or [])
-    row_count = profile.get('row_count', 0)
+    client = get_anomaly_openai_client()
+    settings = get_settings()
+    report_input = build_report_input(state, findings)
 
-    lines = [
-        '<b>Анализ kolesa завершен</b>',
-        '',
-        f'Проверено строк: <b>{format_value(row_count)}</b>',
-        f'Найдено проблем: <b>{format_value(len(findings))}</b>',
-    ]
-
-    if not findings:
-        lines.append('')
-        lines.append('Базовые проверки не нашли аномалий.')
-        return {
-            **state,
-            'answer': '\n'.join(lines),
-        }
-
-    type_counts = Counter(get_finding_label(finding['type']) for finding in findings)
-    importance_counts = Counter(finding['importance'] for finding in findings)
-
-    lines.extend([
-        '',
-        '<b>По важности</b>',
-    ])
-
-    for importance in ['high', 'medium', 'low']:
-        count = importance_counts.get(importance, 0)
-        if count:
-            lines.append(f'{IMPORTANCE_LABELS[importance]}: {count}')
-
-    lines.extend([
-        '',
-        '<b>Типы проблем</b>',
-    ])
-
-    for label, count in type_counts.most_common(8):
-        lines.append(f'{format_value(label)}: {count}')
-
-    lines.extend([
-        '',
-        '<b>Главные находки</b>',
-    ])
-
-    for finding in findings[:6]:
-        importance = IMPORTANCE_LABELS.get(finding.get('importance'), finding.get('importance'))
-        column = finding.get('column') or 'таблица'
-        lines.append(
-            f"- <b>{format_value(column)}</b>: {format_value(finding['reason'])} "
-            f"({format_value(finding['count'])}, важность: {format_value(importance)})"
-        )
-
-    lines.extend([
-        '',
-        '<b>Примеры</b>',
-    ])
-
-    example_lines = []
-    seen_examples = set()
-    for finding in findings:
-        for row in (finding.get('sample_rows') or [])[:2]:
-            example_key = row.get('kolesa_url') or row.get('kolesa_id') or row.get('id')
-            if example_key in seen_examples:
-                continue
-
-            seen_examples.add(example_key)
-            example_lines.append(f"- {format_sample_row(row)}")
-
-        if not finding.get('sample_rows'):
-            for value in format_detail_values(finding):
-                example_key = f"{finding.get('column')}:{value}"
-                if example_key in seen_examples:
-                    continue
-
-                seen_examples.add(example_key)
-                example_lines.append(f"- {format_value(finding.get('column'))}: {value}")
-
-        if len(example_lines) >= 6:
-            break
-
-    lines.extend(example_lines[:6] if example_lines else ['Нет отдельных строк-примеров для верхних находок.'])
+    response = await client.responses.create(
+        model=settings.openai_model,
+        instructions=ANOMALY_REPORT_SYSTEM_PROMPT,
+        input=report_input,
+    )
+    logger.info(f'LLM-отчет по аномалиям сформирован')
 
     return {
         **state,
-        'answer': '\n'.join(lines),
+        'answer': response.output_text,
     }
