@@ -28,7 +28,7 @@ KOLESA_COLUMNS = (
     'found_img',
 )
 
-forbidden_sql_keywords = ['delete', 'update', 'insert', 'drop', 'alter', 'create', 'truncate', 'replace', 'grant', 'revoke', 'commit', 'rollback', 'savepoint', 'lock', 'unlock', 'analyze', 'vacuum', 'explain', 'set', 'reset', 'show', 'begin', 'end', 'declare', 'fetch', 'close']   
+forbidden_sql_keywords = ['delete', 'update', 'insert', 'drop', 'alter', 'create', 'truncate', 'replace', 'grant', 'revoke', 'commit', 'rollback', 'savepoint', 'lock', 'unlock', 'analyze', 'vacuum', 'explain', 'set', 'reset', 'show', 'begin', 'declare', 'fetch', 'close']
 sql_word_separators = ' \n\t\r,.;()[]{}+-*/=%<>!?:\'"`'
 
 

@@ -1,4 +1,4 @@
-from db.postgres import fetch_all, fetch_value, get_table_columns, validate_table_name
+from db.postgres import execute_sql_query, fetch_all, fetch_value, get_table_columns, validate_table_name
 
 
 # Настройки базовых проверок: какие колонки считать важными и как их проверять.
@@ -548,8 +548,7 @@ async def check_logic_rules(table_name: str):
 
 
 async def run_custom_sql(sql_query: str):
-    # TODO: выполнение кастомного запроса от LLM
-    pass
+    return await execute_sql_query(sql_query)
 
 
 async def run_standard_checks(table_name: str):
