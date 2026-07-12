@@ -239,6 +239,15 @@ IQR нашел 70 объявлений с пробегом выше 501 917 км
 
 4. Указать пароль для БД в `POSTGRES_PASSWORD`
 
+Настройки полного анализа в `.env`:
+
+- `ANALYZE_DEFAULT_TABLE` — таблица для команды `/analyze`.
+- `ANALYZE_MAX_CUSTOM_CHECK_ITERATIONS` — максимум итераций дополнительных SQL-проверок.
+- `ANALYZE_CUSTOM_SQL_PER_ITERATION_LIMIT` — максимум custom SQL-запросов за одну итерацию.
+- `ANALYZE_CUSTOM_SQL_TOTAL_LIMIT` — общий лимит custom SQL-запросов за анализ.
+- `ANALYZE_REPORT_FINDINGS_LIMIT` — максимум findings, передаваемых в итоговый отчет.
+- `ANALYZE_REPORT_SAMPLE_ROWS_LIMIT` — максимум примеров строк для одного finding.
+
 ### Запуск контейнеров
 
 Далее этапы запуска через docker compose контейнеров отдельно для базы данных PostreSQL и остальных сервисов (Агент, Бот)

@@ -120,18 +120,15 @@ async def get_schema(table_name: str):
     }
 
 
-async def profile_table(table_name: str):
-    # Собираем общий обзор таблицы: размер, примеры строк и статистики по колонкам
-    schema = await get_schema(table_name)
+async def profile_table(schema: dict):
+    # Собираем общий обзор таблицы: размер и статистики по колонкам.
     table_sql = schema['table_name']
 
     row_count = await fetch_value(f'SELECT COUNT(*) FROM {table_sql}')
-    sample_rows = await fetch_all(f'SELECT * FROM {table_sql} LIMIT 5')
 
     profile = {
         'table_name': schema['table_name'],
         'row_count': row_count,
-        'sample_rows': sample_rows,
         'columns': {},
     }
 
@@ -143,7 +140,6 @@ async def profile_table(table_name: str):
 
         column_profile = {
             'data_type': data_type,
-            'is_nullable': column['is_nullable'],
             'null_count': await fetch_value(f'SELECT COUNT(*) FROM {table_sql} WHERE {column_sql} IS NULL'),
             'unique_count': await fetch_value(f'SELECT COUNT(DISTINCT {column_sql}) FROM {table_sql}'),
         }
@@ -175,7 +171,7 @@ async def profile_table(table_name: str):
                 SELECT {clean_column_sql}::text AS value, COUNT(*) AS count
                 FROM {table_sql} WHERE {column_sql} IS NOT NULL
                 GROUP BY value ORDER BY count DESC
-                LIMIT 10
+                LIMIT 5
                 '''
             )
 
@@ -196,7 +192,7 @@ async def profile_table(table_name: str):
                 SELECT {column_sql}::text AS value, COUNT(*) AS count
                 FROM {table_sql} WHERE {column_sql} IS NOT NULL
                 GROUP BY {column_sql} ORDER BY count DESC
-                LIMIT 10
+                LIMIT 5
                 '''
             )
 
@@ -207,9 +203,8 @@ async def profile_table(table_name: str):
 
 # Проверки пропусков в ключевых колонках
 
-async def check_missing_values(table_name: str):
-    schema = await get_schema(table_name)
-    profile = await profile_table(table_name)
+async def check_missing_values(schema: dict, profile: dict):
+    table_name = schema['table_name']
     findings = []
 
     # Проверяем только важные колонки, т.к. есть и необязательные поля, по типу generation.
@@ -234,7 +229,7 @@ async def check_missing_values(table_name: str):
                 sample_rows,
             ))
 
-        if is_text_type(column_info['data_type']) and column_info.get('empty_count', 0) > 0:
+        if is_text_type(column_info['data_type']) and column_info['empty_count'] > 0:
             clean_column_sql = clean_text_sql(column_name)
             sample_rows = await get_sample_rows(
                 table_name,
@@ -252,7 +247,7 @@ async def check_missing_values(table_name: str):
                 sample_rows,
             ))
 
-        if is_text_type(column_info['data_type']) and column_info.get('unknown_count', 0) > 0:
+        if is_text_type(column_info['data_type']) and column_info['unknown_count'] > 0:
             clean_column_sql = clean_text_sql(column_name)
             sample_rows = await get_sample_rows(
                 table_name,
@@ -275,8 +270,8 @@ async def check_missing_values(table_name: str):
 
 # Проверки числовых границ и статистических выбросов
 
-async def check_numeric_outliers(table_name: str):
-    schema = await get_schema(table_name)
+async def check_numeric_outliers(schema: dict):
+    table_name = schema['table_name']
     findings = []
 
     for column_name in NUMERIC_CHECK_COLUMNS:
@@ -477,8 +472,8 @@ async def check_duplicates(table_name: str):
 
 # Проверки согласованности между связанными колонками
 
-async def check_logic_rules(table_name: str):
-    schema = await get_schema(table_name)
+async def check_logic_rules(schema: dict):
+    table_name = schema['table_name']
     findings = []
 
     logic_rules = [
@@ -551,15 +546,15 @@ async def run_custom_sql(sql_query: str):
     return await execute_sql_query(sql_query)
 
 
-async def run_standard_checks(table_name: str):
-    table_name = await validate_table_name(table_name)
+async def run_standard_checks(schema: dict, profile: dict):
+    table_name = schema['table_name']
 
     # Запускаем все первичные проверки
     findings = []
-    findings.extend(await check_missing_values(table_name))
-    findings.extend(await check_numeric_outliers(table_name))
+    findings.extend(await check_missing_values(schema, profile))
+    findings.extend(await check_numeric_outliers(schema))
     findings.extend(await check_categorical_anomalies(table_name))
     findings.extend(await check_duplicates(table_name))
-    findings.extend(await check_logic_rules(table_name))
+    findings.extend(await check_logic_rules(schema))
 
     return findings

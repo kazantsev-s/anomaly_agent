@@ -1,9 +1,9 @@
 from langgraph.graph import END, START, StateGraph
 
 from agent.ask_nodes import generate_sql_query, execute_sql, answer
-from agent.state import AgentState
+from agent.state import AskAgentState
 
-graph_builder = StateGraph(AgentState)
+graph_builder = StateGraph(AskAgentState)
 
 # Собираем граф агента (ноды и связи между ними)
 

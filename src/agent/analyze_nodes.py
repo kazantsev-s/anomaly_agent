@@ -1,10 +1,8 @@
 from collections import Counter
-from html import escape
 import json
 
-from openai import AsyncOpenAI
-
-from agent.state import AnomalyAgentState
+from agent.helpers import get_openai_client, load_prompt, render_prompt, strip_markdown_code_block 
+from agent.state import AnalyzeAgentState
 from agent.tools import get_schema, profile_table, run_custom_sql, run_standard_checks
 from config import get_settings
 from logger import init_logger
@@ -12,11 +10,6 @@ from logger import init_logger
 
 logger = init_logger()
 
-
-REPORT_FINDINGS_LIMIT = 12
-REPORT_SAMPLE_ROWS_LIMIT = 3
-CUSTOM_SQL_PER_ITERATION_LIMIT = 5
-CUSTOM_SQL_TOTAL_LIMIT = 10
 
 IMPORTANCE_ORDER = {
     'high': 0,
@@ -42,238 +35,83 @@ FINDING_TYPE_LABELS = {
     'fresh_car_high_mileage': 'свежий автомобиль с большим пробегом',
 }
 
-ANOMALY_REPORT_SYSTEM_PROMPT = '''
-    Ты аналитик качества данных таблицы kolesa с объявлениями Kolesa.kz.
-    Отвечай на русском языке.
 
-    Сформируй короткий отчет для Telegram в HTML.
-    Используй только простые теги:
-    <b>жирный текст</b>
-    <i>курсив</i>
-    <code>код или значение</code>
-    <a href="https://example.com">ссылка</a>
-
-    Не используй Markdown:
-    - не пиши **жирный текст**
-    - не пиши ### заголовки
-    - не используй markdown-таблицы через |
-
-    Объясняй только аномалии и результаты custom SQL из входного JSON.
-    Не придумывай новые findings, новые колонки, новые строки и новые причины.
-    Если findings пустой, напиши, что базовые проверки не нашли аномалий.
-    Не выводи числа без пояснения, что они означают: строк, объявлений, цена, год, пробег, количество фото и т.д.
-    Если custom SQL группирует по parsed_at::date, называй это датой парсинга, а не просто датой.
-    Разделяй реальные ошибки данных и вероятно валидные редкие случаи.
-    Если редкая категория логично соответствует найденным моделям, напиши, что это похоже на валидную редкую категорию, а не на ошибку.
-    Если engine_volume = 0 относится к электромобилям, напиши, что это может быть нормальным правилом кодирования для электромобилей.
-    Для проблемных объявлений показывай конкретные примеры: id, kolesa_id и ссылку kolesa_url, если они есть во входных данных.
-    Если строк много, покажи 2-3 характерных примера или sample_ids/sample_urls из custom SQL, а не весь список.
-    Если во входных данных есть только агрегаты без ссылок, честно напиши, что конкретных ссылок в этом блоке нет.
-    Держи ответ короче 3500 символов.
-
-    Структура ответа:
-    1. Краткое резюме.
-    2. Основные проблемы.
-    3. Детальные находки.
-    4. Что проверить вручную.
-    5. Итоговая оценка качества данных.
-'''
-
-CUSTOM_CHECK_PLANNER_SYSTEM_PROMPT = '''
-    Ты SQL-планировщик дополнительных проверок качества данных таблицы kolesa.
-    Тебе передают схему, краткий профиль, базовые findings и уже выполненные custom SQL-запросы.
-
-    Нужно решить, нужны ли дополнительные SELECT-запросы, чтобы точнее объяснить уже найденные аномалии.
-    Не ищи абстрактные проблемы вне переданных findings.
-
-    Правила:
-    - Верни только JSON без markdown и без объяснений вне JSON.
-    - Используй только SELECT или WITH.
-    - Запросы должны читать только таблицу kolesa.
-    - Не используй INSERT, UPDATE, DELETE, DROP, ALTER, CREATE и другие изменяющие операции.
-    - Не ставь точку с запятой в конце.
-    - Не делай SELECT *.
-    - За одну итерацию предложи не больше 5 SQL-запросов.
-    - Если полезных уточнений больше нет, верни need_more_checks: false.
-    - Для запросов, которые возвращают конкретные объявления, выбирай id, kolesa_id, brand, model, year, mileage, city, price, kolesa_url.
-    - Для агрегатных запросов по группам добавляй примеры объявлений, если это уместно. Например:
-      (array_agg(id ORDER BY price DESC))[1:3] AS sample_ids,
-      (array_agg(kolesa_url ORDER BY price DESC))[1:3] AS sample_urls.
-      Для проверок не по цене выбирай более подходящее поле сортировки.
-
-    Формат ответа:
-    {
-      "need_more_checks": true,
-      "reason": "зачем нужны дополнительные проверки",
-      "sql_queries": [
-        {
-          "name": "short_name",
-          "purpose": "что уточняет запрос",
-          "query": "SELECT ..."
-        }
-      ]
-    }
-'''
+ANOMALY_REPORT_SYSTEM_PROMPT = load_prompt('analyze/anomaly_report_system.prompt.md')
+CUSTOM_CHECK_PLANNER_SYSTEM_PROMPT_TEMPLATE = load_prompt('analyze/custom_check_planner_system.prompt.md')
 
 
-def get_table_name(state: AnomalyAgentState) -> str:
-    return state.get('table_name') or 'kolesa'
+# Вспомогательные функции
 
-
-def get_anomaly_openai_client() -> AsyncOpenAI:
-    logger.info(f'Вызов ноды get_anomaly_openai_client')
-    settings = get_settings()
-
-    if not settings.openai_api_key:
-        logger.error('API ключ к OpenAI не задан в переменных окружения')
-        raise ValueError('API ключ к OpenAI не задан в переменных окружения')
-
-    return AsyncOpenAI(api_key=settings.openai_api_key)
-
-
+# Сортирует findings: сначала важность, затем количество строк
 def sort_findings(findings: list[dict]) -> list[dict]:
     return sorted(
         findings,
         key=lambda finding: (
-            IMPORTANCE_ORDER.get(finding.get('importance'), 3),
-            -finding.get('count', 0),
-            finding.get('type', ''),
+            IMPORTANCE_ORDER[finding['importance']],
+            -finding['count'],
+            finding['type']
         ),
     )
 
 
-def format_value(value) -> str:
-    if value is None:
-        return 'NULL'
-
-    return escape(str(value))
-
-
-def format_sample_row(row: dict) -> str:
-    parts = []
-
-    title = ' '.join(
-        part for part in [
-            str(row.get('brand') or ''),
-            str(row.get('model') or ''),
-            str(row.get('year') or ''),
-        ]
-        if part
-    )
-    if title:
-        parts.append(format_value(title))
-
-    if row.get('price') is not None:
-        parts.append(f"цена {format_value(row['price'])}")
-
-    if row.get('mileage') is not None:
-        parts.append(f"пробег {format_value(row['mileage'])}")
-
-    if row.get('city'):
-        parts.append(format_value(row['city']))
-
-    if row.get('kolesa_url'):
-        url = escape(str(row['kolesa_url']), quote=True)
-        parts.append(f'<a href="{url}">объявление</a>')
-    elif row.get('kolesa_id') is not None:
-        parts.append(f"id {format_value(row['kolesa_id'])}")
-
-    return ', '.join(parts) if parts else format_value(row)
-
-
-def get_finding_label(finding_type: str) -> str:
-    return FINDING_TYPE_LABELS.get(finding_type, finding_type)
-
-
-def build_profile_summary(profile: dict) -> dict:
-    logger.info(f'Подготовка краткого профиля таблицы для LLM-отчета')
-    columns_summary = {}
-
-    for column_name, column_profile in (profile.get('columns') or {}).items():
-        summary = {
-            'data_type': column_profile.get('data_type'),
-            'null_count': column_profile.get('null_count', 0),
-            'unique_count': column_profile.get('unique_count', 0),
-        }
-
-        if column_profile.get('numeric_stats'):
-            summary['numeric_stats'] = column_profile['numeric_stats']
-
-        if column_profile.get('datetime_stats'):
-            summary['datetime_stats'] = column_profile['datetime_stats']
-
-        if 'empty_count' in column_profile:
-            summary['empty_count'] = column_profile.get('empty_count', 0)
-
-        if 'unknown_count' in column_profile:
-            summary['unknown_count'] = column_profile.get('unknown_count', 0)
-
-        if column_profile.get('top_values'):
-            summary['top_values'] = column_profile['top_values'][:5]
-
-        columns_summary[column_name] = summary
-
-    return {
-        'row_count': profile.get('row_count', 0),
-        'columns': columns_summary,
-    }
-
-
 def compact_sample_rows(sample_rows: list[dict]) -> list[dict]:
     logger.info(f'Подготовка примеров строк для LLM-отчета')
+    
+    settings = get_settings()
     rows = []
 
-    for row in sample_rows[:REPORT_SAMPLE_ROWS_LIMIT]:
+    for row in sample_rows[:settings.analyze_report_sample_rows_limit]:
         rows.append({
-            'id': row.get('id'),
-            'kolesa_id': row.get('kolesa_id'),
-            'brand': row.get('brand'),
-            'model': row.get('model'),
-            'year': row.get('year'),
-            'mileage': row.get('mileage'),
-            'city': row.get('city'),
-            'price': row.get('price'),
-            'kolesa_url': row.get('kolesa_url'),
-            'text': format_sample_row(row),
+            'id': row['id'],
+            'kolesa_id': row['kolesa_id'],
+            'brand': row['brand'],
+            'model': row['model'],
+            'year': row['year'],
+            'mileage': row['mileage'],
+            'city': row['city'],
+            'price': row['price'],
+            'kolesa_url': row['kolesa_url']
         })
 
     return rows
 
 
-def build_report_input(state: AnomalyAgentState, findings: list[dict]) -> str:
+def build_report_input(state: AnalyzeAgentState, findings: list[dict]) -> str:
     logger.info(f'Подготовка входных данных для LLM-отчета')
-    schema = state.get('schema') or {}
-    profile = state.get('profile') or {}
-    top_findings = findings[:REPORT_FINDINGS_LIMIT]
+
+    settings = get_settings()
+    schema = state['schema']
+    profile = state['profile']
+    top_findings = findings[:settings.analyze_report_findings_limit]
 
     report_data = {
-        'table_name': state.get('table_name') or 'kolesa',
+        'table_name': state['table_name'],
         'schema': {
-            'column_names': schema.get('column_names', []),
-            'numeric_columns': schema.get('numeric_columns', []),
-            'text_columns': schema.get('text_columns', []),
-            'datetime_columns': schema.get('datetime_columns', []),
-            'boolean_columns': schema.get('boolean_columns', []),
+            'column_names': schema['column_names'],
+            'numeric_columns': schema['numeric_columns'],
+            'text_columns': schema['text_columns'],
+            'datetime_columns': schema['datetime_columns'],
+            'boolean_columns': schema['boolean_columns']
         },
-        'profile_summary': build_profile_summary(profile),
+        'profile': profile,
         'findings_total': len(findings),
         'findings_in_report': len(top_findings),
         'importance_counts': Counter(finding['importance'] for finding in findings),
-        'type_counts': Counter(get_finding_label(finding['type']) for finding in findings),
-        'custom_sql_results': state.get('custom_sql_results') or [],
+        'type_counts': Counter(FINDING_TYPE_LABELS.get(finding['type'], finding['type']) for finding in findings),
+        'custom_sql_results': state['custom_sql_results'],
         'findings': [
             {
-                'type': finding.get('type'),
-                'label': get_finding_label(finding.get('type')),
-                'column': finding.get('column'),
-                'importance': finding.get('importance'),
-                'count': finding.get('count'),
-                'reason': finding.get('reason'),
-                'sample_rows': compact_sample_rows(finding.get('sample_rows') or []),
-                'details': finding.get('details') or {},
+                'type': finding['type'],
+                'label': FINDING_TYPE_LABELS.get(finding['type'], finding['type']),
+                'column': finding['column'],
+                'importance': finding['importance'],
+                'count': finding['count'],
+                'reason': finding['reason'],
+                'sample_rows': compact_sample_rows(finding['sample_rows']),
+                'details': finding['details']
             }
             for finding in top_findings
-        ],
+        ]
     }
 
     report_json = json.dumps(report_data, ensure_ascii=False, default=str)
@@ -281,55 +119,49 @@ def build_report_input(state: AnomalyAgentState, findings: list[dict]) -> str:
     return report_json
 
 
-def build_custom_check_input(state: AnomalyAgentState) -> str:
+def build_custom_check_input(state: AnalyzeAgentState) -> str:
     logger.info(f'Подготовка входных данных для планировщика custom SQL')
-    findings = sort_findings(state.get('standard_findings') or [])
-    custom_sql_results = state.get('custom_sql_results') or []
-    custom_sql_count = state.get('custom_sql_count') or 0
-    remaining_budget = max(CUSTOM_SQL_TOTAL_LIMIT - custom_sql_count, 0)
+
+    settings = get_settings()
+    schema = state['schema']
+    findings = sort_findings(state['standard_findings'])
+    custom_sql_results = state['custom_sql_results']
+    custom_sql_count = state['custom_sql_count']
+    remaining_limit = max(settings.analyze_custom_sql_total_limit - custom_sql_count, 0)
 
     planner_data = {
-        'table_name': state.get('table_name') or 'kolesa',
-        'remaining_sql_budget': remaining_budget,
-        'max_sql_queries_this_iteration': min(CUSTOM_SQL_PER_ITERATION_LIMIT, remaining_budget),
+        'table_name': state['table_name'],
+        'remaining_sql_limit': remaining_limit,
+        'max_sql_queries_this_iteration': min(settings.analyze_custom_sql_per_iteration_limit, remaining_limit),
         'schema': {
-            'column_names': (state.get('schema') or {}).get('column_names', []),
-            'numeric_columns': (state.get('schema') or {}).get('numeric_columns', []),
-            'text_columns': (state.get('schema') or {}).get('text_columns', []),
-            'datetime_columns': (state.get('schema') or {}).get('datetime_columns', []),
-            'boolean_columns': (state.get('schema') or {}).get('boolean_columns', []),
+            'column_names': schema['column_names'],
+            'numeric_columns': schema['numeric_columns'],
+            'text_columns': schema['text_columns'],
+            'datetime_columns': schema['datetime_columns'],
+            'boolean_columns': schema['boolean_columns']
         },
-        'profile_summary': build_profile_summary(state.get('profile') or {}),
+        'profile': state['profile'],
         'standard_findings': [
             {
-                'type': finding.get('type'),
-                'label': get_finding_label(finding.get('type')),
-                'column': finding.get('column'),
-                'importance': finding.get('importance'),
-                'count': finding.get('count'),
-                'reason': finding.get('reason'),
-                'sample_rows': compact_sample_rows(finding.get('sample_rows') or []),
-                'details': finding.get('details') or {},
+                'type': finding['type'],
+                'label': FINDING_TYPE_LABELS.get(finding['type'], finding['type']),
+                'column': finding['column'],
+                'importance': finding['importance'],
+                'count': finding['count'],
+                'reason': finding['reason'],
+                'sample_rows': compact_sample_rows(finding['sample_rows']),
+                'details': finding['details']
             }
-            for finding in findings[:REPORT_FINDINGS_LIMIT]
+            for finding in findings[:settings.analyze_report_findings_limit]
         ],
-        'custom_sql_results': custom_sql_results,
+        'custom_sql_results': custom_sql_results
     }
 
     return json.dumps(planner_data, ensure_ascii=False, default=str)
 
 
 def parse_llm_json(raw_text: str) -> dict:
-    text = raw_text.strip()
-
-    if text.startswith('```json'):
-        text = text.removeprefix('```json').strip()
-
-    if text.startswith('```'):
-        text = text.removeprefix('```').strip()
-
-    if text.endswith('```'):
-        text = text.removesuffix('```').strip()
+    text = strip_markdown_code_block(raw_text, 'json')
 
     try:
         result = json.loads(text)
@@ -338,135 +170,183 @@ def parse_llm_json(raw_text: str) -> dict:
         return {
             'need_more_checks': False,
             'reason': 'LLM вернула невалидный JSON',
-            'sql_queries': [],
+            'sql_queries': []
         }
 
     if not isinstance(result, dict):
         return {
             'need_more_checks': False,
             'reason': 'LLM вернула JSON не в формате объекта',
-            'sql_queries': [],
+            'sql_queries': []
         }
 
     return result
 
 
-async def load_schema(state: AnomalyAgentState) -> AnomalyAgentState:
+def route_after_plan(state: AnalyzeAgentState) -> str:
+    settings = get_settings()
+    plan = state['custom_check_plan']
+    sql_queries = plan['sql_queries']
+    custom_sql_count = state['custom_sql_count']
+    custom_check_iterations = state['custom_check_iterations']
+
+    if not plan['need_more_checks']:
+        return 'final_anomaly_answer'
+
+    if custom_sql_count >= settings.analyze_custom_sql_total_limit:
+        return 'final_anomaly_answer'
+
+    if custom_check_iterations >= settings.analyze_max_custom_check_iterations:
+        return 'final_anomaly_answer'
+
+    if not sql_queries:
+        return 'final_anomaly_answer'
+
+    return 'run_custom_checks'
+
+
+async def load_schema(state: AnalyzeAgentState) -> AnalyzeAgentState:
     logger.info(f'Вызов ноды load_schema')
-    table_name = get_table_name(state)
+
+    table_name = state['table_name']
     schema = await get_schema(table_name)
     logger.info(f'Схема таблицы {table_name} загружена')
 
     return {
         **state,
         'table_name': table_name,
-        'schema': schema,
+        'schema': schema
     }
 
 
-async def profile_table_node(state: AnomalyAgentState) -> AnomalyAgentState:
+async def profile_table_node(state: AnalyzeAgentState) -> AnalyzeAgentState:
     logger.info(f'Вызов ноды profile_table_node')
-    table_name = get_table_name(state)
-    profile = await profile_table(table_name)
-    logger.info(f'Профиль таблицы {table_name} собран')
+
+    profile = await profile_table(state['schema'])
+    logger.info(f"Профиль таблицы {state['table_name']} собран")
 
     return {
         **state,
-        'profile': profile,
+        'profile': profile
     }
 
 
-async def run_standard_checks_node(state: AnomalyAgentState) -> AnomalyAgentState:
+async def run_standard_checks_node(state: AnalyzeAgentState) -> AnalyzeAgentState:
     logger.info(f'Вызов ноды run_standard_checks_node')
-    table_name = get_table_name(state)
-    standard_findings = await run_standard_checks(table_name)
+
+    standard_findings = await run_standard_checks(state['schema'], state['profile'])
+
     logger.info(f'Базовые проверки нашли findings: {len(standard_findings)}')
 
     return {
         **state,
         'standard_findings': standard_findings,
+        'custom_sql_results': [],
+        'custom_sql_count': 0,
+        'custom_check_iterations': 0
     }
 
 
-async def merge_findings(state: AnomalyAgentState) -> AnomalyAgentState:
-    logger.info(f'Вызов ноды merge_findings')
-    all_findings = list(state.get('standard_findings') or [])
-    logger.info(f'Итоговый список findings содержит записей: {len(all_findings)}')
-
-    return {
-        **state,
-        'all_findings': all_findings,
-    }
-
-
-async def plan_custom_checks(state: AnomalyAgentState) -> AnomalyAgentState:
+async def plan_custom_checks(state: AnalyzeAgentState) -> AnalyzeAgentState:
     logger.info(f'Вызов ноды plan_custom_checks')
-    custom_sql_count = state.get('custom_sql_count') or 0
 
-    if custom_sql_count >= CUSTOM_SQL_TOTAL_LIMIT:
+    settings = get_settings()
+    custom_sql_count = state['custom_sql_count']
+    custom_check_iterations = state['custom_check_iterations']
+
+    if custom_check_iterations >= settings.analyze_max_custom_check_iterations:
+        logger.info(f'Лимит итераций custom SQL исчерпан: {custom_check_iterations}')
+
+        return {
+            **state,
+            'custom_check_plan': {
+                'need_more_checks': False,
+                'reason': 'Лимит итераций custom SQL исчерпан',
+                'sql_queries': []
+            }
+        }
+
+    if custom_sql_count >= settings.analyze_custom_sql_total_limit:
         logger.info(f'Лимит custom SQL исчерпан: {custom_sql_count}')
+
         return {
             **state,
             'custom_check_plan': {
                 'need_more_checks': False,
                 'reason': 'Лимит custom SQL исчерпан',
-                'sql_queries': [],
-            },
+                'sql_queries': []
+            }
         }
 
-    client = get_anomaly_openai_client()
-    settings = get_settings()
+    client = get_openai_client()
     planner_input = build_custom_check_input(state)
+    planner_system_prompt = render_prompt(
+        CUSTOM_CHECK_PLANNER_SYSTEM_PROMPT_TEMPLATE,
+        max_sql_queries=settings.analyze_custom_sql_per_iteration_limit
+    )
 
     response = await client.responses.create(
         model=settings.openai_model,
-        instructions=CUSTOM_CHECK_PLANNER_SYSTEM_PROMPT,
-        input=planner_input,
+        instructions=planner_system_prompt,
+        input=planner_input
     )
+
     custom_check_plan = parse_llm_json(response.output_text)
-    sql_queries = custom_check_plan.get('sql_queries') or []
+    custom_check_plan.setdefault('need_more_checks', False)
+    custom_check_plan.setdefault('reason', '')
+    custom_check_plan.setdefault('sql_queries', [])
+    sql_queries = custom_check_plan['sql_queries']
 
     if not isinstance(sql_queries, list):
         sql_queries = []
         custom_check_plan['sql_queries'] = []
         custom_check_plan['need_more_checks'] = False
+    else:
+        for sql_query in sql_queries:
+            if not isinstance(sql_query, dict):
+                raise ValueError('LLM вернула custom SQL не в формате объекта')
+
+            for field_name in ['name', 'purpose', 'query']:
+                if field_name not in sql_query:
+                    raise ValueError(f'В custom SQL-плане нет поля {field_name}')
 
     logger.info(f'LLM предложила custom SQL-запросов: {len(sql_queries)}')
 
     return {
         **state,
-        'custom_check_plan': custom_check_plan,
+        'custom_check_plan': custom_check_plan
     }
 
 
-async def run_custom_checks(state: AnomalyAgentState) -> AnomalyAgentState:
+async def run_custom_checks(state: AnalyzeAgentState) -> AnalyzeAgentState:
     logger.info(f'Вызов ноды run_custom_checks')
-    plan = state.get('custom_check_plan') or {}
-    custom_sql_results = list(state.get('custom_sql_results') or [])
-    custom_sql_count = state.get('custom_sql_count') or 0
-    iteration = (state.get('custom_check_iteration') or 0) + 1
-    remaining_budget = max(CUSTOM_SQL_TOTAL_LIMIT - custom_sql_count, 0)
-    max_queries = min(CUSTOM_SQL_PER_ITERATION_LIMIT, remaining_budget)
-    sql_queries = (plan.get('sql_queries') or [])[:max_queries]
+
+    settings = get_settings()
+    plan = state['custom_check_plan']
+    custom_sql_results = list(state['custom_sql_results'])
+    custom_sql_count = state['custom_sql_count']
+    custom_check_iterations = state['custom_check_iterations']
+    remaining_limit = max(settings.analyze_custom_sql_total_limit - custom_sql_count, 0)
+    max_queries = min(settings.analyze_custom_sql_per_iteration_limit, remaining_limit)
+    sql_queries = plan['sql_queries'][:max_queries]
+
     executed_queries = {
-        result.get('query')
+        result['query']
         for result in custom_sql_results
-        if result.get('query')
     }
 
     for sql_query in sql_queries:
-        if not isinstance(sql_query, dict):
-            continue
+        name = sql_query['name']
+        query = sql_query['query']
 
-        name = sql_query.get('name') or 'custom_sql'
-        query = sql_query.get('query') or ''
         logger.info(f'Выполнение custom SQL-запроса {name}: {query}')
 
         if query in executed_queries:
             logger.info(f'Custom SQL-запрос {name} уже выполнялся')
+
             custom_sql_results.append({
                 'name': name,
-                'purpose': sql_query.get('purpose') or '',
+                'purpose': sql_query['purpose'],
                 'query': query,
                 'rows': [],
                 'error': 'Запрос уже выполнялся',
@@ -479,17 +359,19 @@ async def run_custom_checks(state: AnomalyAgentState) -> AnomalyAgentState:
             executed_queries.add(query)
             custom_sql_results.append({
                 'name': name,
-                'purpose': sql_query.get('purpose') or '',
+                'purpose': sql_query['purpose'],
                 'query': query,
                 'rows': rows,
                 'error': None,
             })
+
             logger.info(f'Custom SQL-запрос {name} вернул строк: {len(rows)}')
         except Exception as e:
             logger.error(f'Ошибка выполнения custom SQL-запроса {name}: {e}')
+
             custom_sql_results.append({
                 'name': name,
-                'purpose': sql_query.get('purpose') or '',
+                'purpose': sql_query['purpose'],
                 'query': query,
                 'rows': [],
                 'error': str(e),
@@ -500,32 +382,16 @@ async def run_custom_checks(state: AnomalyAgentState) -> AnomalyAgentState:
     return {
         **state,
         'custom_sql_results': custom_sql_results,
-        'custom_check_iteration': iteration,
         'custom_sql_count': custom_sql_count,
+        'custom_check_iterations': custom_check_iterations + 1
     }
 
 
-def route_after_plan(state: AnomalyAgentState) -> str:
-    plan = state.get('custom_check_plan') or {}
-    sql_queries = plan.get('sql_queries') or []
-    custom_sql_count = state.get('custom_sql_count') or 0
-
-    if not plan.get('need_more_checks'):
-        return 'final_anomaly_answer'
-
-    if custom_sql_count >= CUSTOM_SQL_TOTAL_LIMIT:
-        return 'final_anomaly_answer'
-
-    if not sql_queries:
-        return 'final_anomaly_answer'
-
-    return 'run_custom_checks'
-
-
-async def final_anomaly_answer(state: AnomalyAgentState) -> AnomalyAgentState:
+async def final_anomaly_answer(state: AnalyzeAgentState) -> AnalyzeAgentState:
     logger.info(f'Вызов ноды final_anomaly_answer')
-    findings = sort_findings(state.get('all_findings') or [])
-    client = get_anomaly_openai_client()
+
+    findings = sort_findings(state['standard_findings'])
+    client = get_openai_client()
     settings = get_settings()
     report_input = build_report_input(state, findings)
 
@@ -534,9 +400,10 @@ async def final_anomaly_answer(state: AnomalyAgentState) -> AnomalyAgentState:
         instructions=ANOMALY_REPORT_SYSTEM_PROMPT,
         input=report_input,
     )
-    logger.info(f'LLM-отчет по аномалиям сформирован')
+
+    logger.info(f'Отчет по аномалиям сформирован')
 
     return {
         **state,
-        'answer': response.output_text,
+        'answer': response.output_text
     }

@@ -45,9 +45,6 @@ async def ask_agent(message):
         logger.info(f'Вызов AI-агента')
         agent_result = await ask_graph.ainvoke({
             'prompt': user_prompt,
-            'sql_query': '',
-            'sql_result': '',
-            'answer': '',
         })
     except Exception:
         logger.exception('Ошибка вызова AI-агента')
@@ -60,11 +57,12 @@ async def ask_agent(message):
 
 @dp.message(Command('analyze'))
 async def analyze_table(message):
+    settings = get_settings()
+
     try:
         logger.info('Вызов анализа аномалий')
         agent_result = await analyze_graph.ainvoke({
-            'table_name': 'kolesa',
-            'answer': '',
+            'table_name': settings.analyze_default_table,
         })
     except Exception:
         logger.exception('Ошибка анализа аномалий')
