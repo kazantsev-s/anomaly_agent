@@ -1,6 +1,6 @@
 from langgraph.graph import END, START, StateGraph
 
-from agent.nodes import generate_sql_query, execute_sql, answer
+from agent.ask_nodes import generate_sql_query, execute_sql, answer
 from agent.state import AgentState
 
 graph_builder = StateGraph(AgentState)
@@ -18,4 +18,4 @@ graph_builder.add_edge('generate_sql_query', 'execute_sql')
 graph_builder.add_edge('execute_sql', 'answer')
 graph_builder.add_edge('answer', END)
 
-agent_graph = graph_builder.compile()
+ask_graph = graph_builder.compile()

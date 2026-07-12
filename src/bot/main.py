@@ -4,8 +4,8 @@ from aiogram.filters import Command
 from config import get_settings
 from db.postgres import init_db, ping_db
 from logger import init_logger
-from agent.anomaly_graph import anomaly_agent_graph
-from agent.graph import agent_graph
+from agent.analyze_graph import analyze_graph
+from agent.ask_graph import ask_graph
 from aiogram.enums import ParseMode
 
 dp = Dispatcher()
@@ -43,7 +43,7 @@ async def ask_agent(message):
     try:
         # https://reference.langchain.com/python/langgraph/pregel/remote/RemoteGraph/ainvoke
         logger.info(f'Вызов AI-агента')
-        agent_result = await agent_graph.ainvoke({
+        agent_result = await ask_graph.ainvoke({
             'prompt': user_prompt,
             'sql_query': '',
             'sql_result': '',
@@ -62,7 +62,7 @@ async def ask_agent(message):
 async def analyze_table(message):
     try:
         logger.info('Вызов анализа аномалий')
-        agent_result = await anomaly_agent_graph.ainvoke({
+        agent_result = await analyze_graph.ainvoke({
             'table_name': 'kolesa',
             'answer': '',
         })
