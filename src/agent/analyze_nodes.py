@@ -11,12 +11,14 @@ from logger import init_logger
 logger = init_logger()
 
 
+# Порядок важности нужен для единой сортировки findings перед отчетом агента
 IMPORTANCE_ORDER = {
     'high': 0,
     'medium': 1,
     'low': 2,
 }
 
+# Человекочитаемые названия типов аномалий для входа агента
 FINDING_TYPE_LABELS = {
     'missing_null': 'NULL в важных колонках',
     'missing_empty_text': 'пустые строки',
@@ -44,18 +46,13 @@ CUSTOM_CHECK_PLANNER_SYSTEM_PROMPT_TEMPLATE = load_prompt('analyze/custom_check_
 
 # Сортирует findings: сначала важность, затем количество строк
 def sort_findings(findings: list[dict]) -> list[dict]:
-    return sorted(
-        findings,
-        key=lambda finding: (
-            IMPORTANCE_ORDER[finding['importance']],
-            -finding['count'],
-            finding['type']
-        ),
-    )
+    return sorted(findings, key=lambda finding: (IMPORTANCE_ORDER[finding['importance']], -finding['count']))
 
 
+# Оставляет в примерах только поля, полезные для чтения отчета
+# Используется при сборке промпта для plan_custom_checks и final_anomaly_answer
 def compact_sample_rows(sample_rows: list[dict]) -> list[dict]:
-    logger.info(f'Подготовка примеров строк для LLM-отчета')
+    logger.info(f'Подготовка примеров строк для отчета агента')
     
     settings = get_settings()
     rows = []
@@ -76,49 +73,8 @@ def compact_sample_rows(sample_rows: list[dict]) -> list[dict]:
     return rows
 
 
-def build_report_input(state: AnalyzeAgentState, findings: list[dict]) -> str:
-    logger.info(f'Подготовка входных данных для LLM-отчета')
-
-    settings = get_settings()
-    schema = state['schema']
-    profile = state['profile']
-    top_findings = findings[:settings.analyze_report_findings_limit]
-
-    report_data = {
-        'table_name': state['table_name'],
-        'schema': {
-            'column_names': schema['column_names'],
-            'numeric_columns': schema['numeric_columns'],
-            'text_columns': schema['text_columns'],
-            'datetime_columns': schema['datetime_columns'],
-            'boolean_columns': schema['boolean_columns']
-        },
-        'profile': profile,
-        'findings_total': len(findings),
-        'findings_in_report': len(top_findings),
-        'importance_counts': Counter(finding['importance'] for finding in findings),
-        'type_counts': Counter(FINDING_TYPE_LABELS.get(finding['type'], finding['type']) for finding in findings),
-        'custom_sql_results': state['custom_sql_results'],
-        'findings': [
-            {
-                'type': finding['type'],
-                'label': FINDING_TYPE_LABELS.get(finding['type'], finding['type']),
-                'column': finding['column'],
-                'importance': finding['importance'],
-                'count': finding['count'],
-                'reason': finding['reason'],
-                'sample_rows': compact_sample_rows(finding['sample_rows']),
-                'details': finding['details']
-            }
-            for finding in top_findings
-        ]
-    }
-
-    report_json = json.dumps(report_data, ensure_ascii=False, default=str)
-    logger.info(f'В LLM-отчет передано findings: {len(top_findings)} из {len(findings)}')
-    return report_json
-
-
+# Готовит контекст для агента, что планирует дополнительные проверки через запросы
+# Используется в ноде plan_custom_checks
 def build_custom_check_input(state: AnalyzeAgentState) -> str:
     logger.info(f'Подготовка входных данных для планировщика custom SQL')
 
@@ -160,29 +116,33 @@ def build_custom_check_input(state: AnalyzeAgentState) -> str:
     return json.dumps(planner_data, ensure_ascii=False, default=str)
 
 
+# Парсит JSON от агента, что формирует план дополнительных SQL-проверок. При невалидном JSON пропускается планирование
+# Используется в ноде plan_custom_checks
 def parse_llm_json(raw_text: str) -> dict:
     text = strip_markdown_code_block(raw_text, 'json')
 
     try:
         result = json.loads(text)
     except json.JSONDecodeError:
-        logger.error(f'LLM вернула невалидный JSON для custom SQL-плана: {raw_text}')
+        logger.error(f'Агент вернул невалидный JSON для custom SQL-плана: {raw_text}')
         return {
             'need_more_checks': False,
-            'reason': 'LLM вернула невалидный JSON',
+            'reason': 'Агент вернул невалидный JSON',
             'sql_queries': []
         }
 
     if not isinstance(result, dict):
         return {
             'need_more_checks': False,
-            'reason': 'LLM вернула JSON не в формате объекта',
+            'reason': 'Агент вернул JSON не в формате объекта',
             'sql_queries': []
         }
 
     return result
 
 
+# Роутинг analyze_graph после plan_custom_checks
+# Используется как conditional edge в графе
 def route_after_plan(state: AnalyzeAgentState) -> str:
     settings = get_settings()
     plan = state['custom_check_plan']
@@ -205,6 +165,54 @@ def route_after_plan(state: AnalyzeAgentState) -> str:
     return 'run_custom_checks'
 
 
+# Собирает JSON, из которого агент пишет финальный отчет
+# Используется в ноде final_anomaly_answer
+def build_report_input(state: AnalyzeAgentState, findings: list[dict]) -> str:
+    logger.info(f'Подготовка входных данных для отчета агента')
+
+    settings = get_settings()
+    schema = state['schema']
+    profile = state['profile']
+    top_findings = findings[:settings.analyze_report_findings_limit]
+
+    report_data = {
+        'table_name': state['table_name'],
+        'schema': {
+            'column_names': schema['column_names'],
+            'numeric_columns': schema['numeric_columns'],
+            'text_columns': schema['text_columns'],
+            'datetime_columns': schema['datetime_columns'],
+            'boolean_columns': schema['boolean_columns']
+        },
+        'profile': profile,
+        'findings_total': len(findings),
+        'findings_in_report': len(top_findings),
+        'importance_counts': Counter(finding['importance'] for finding in findings),
+        'type_counts': Counter(FINDING_TYPE_LABELS.get(finding['type'], finding['type']) for finding in findings),
+        'custom_sql_results': state['custom_sql_results'],
+        'findings': [
+            {
+                'type': finding['type'],
+                'label': FINDING_TYPE_LABELS.get(finding['type'], finding['type']),
+                'column': finding['column'],
+                'importance': finding['importance'],
+                'count': finding['count'],
+                'reason': finding['reason'],
+                'sample_rows': compact_sample_rows(finding['sample_rows']),
+                'details': finding['details']
+            }
+            for finding in top_findings
+        ]
+    }
+
+    report_json = json.dumps(report_data, ensure_ascii=False, default=str)
+    logger.info(f'В отчет агента передано findings: {len(top_findings)} из {len(findings)}')
+    return report_json
+
+
+# Ноды analyze_graph
+
+# Загружает фиксированную схему таблицы kolesa и кладет ее в state
 async def load_schema(state: AnalyzeAgentState) -> AnalyzeAgentState:
     logger.info(f'Вызов ноды load_schema')
 
@@ -214,16 +222,17 @@ async def load_schema(state: AnalyzeAgentState) -> AnalyzeAgentState:
 
     return {
         **state,
-        'table_name': table_name,
         'schema': schema
     }
 
 
+# Собирает профиль таблицы: статистики, категории и примеры значений
 async def profile_table_node(state: AnalyzeAgentState) -> AnalyzeAgentState:
     logger.info(f'Вызов ноды profile_table_node')
 
+    table_name = state['table_name']
     profile = await profile_table(state['schema'])
-    logger.info(f"Профиль таблицы {state['table_name']} собран")
+    logger.info(f'Профиль таблицы {table_name} собран')
 
     return {
         **state,
@@ -231,6 +240,7 @@ async def profile_table_node(state: AnalyzeAgentState) -> AnalyzeAgentState:
     }
 
 
+# Запускает базовые SQL-проверки и инициализирует счетчики кастомных проверок
 async def run_standard_checks_node(state: AnalyzeAgentState) -> AnalyzeAgentState:
     logger.info(f'Вызов ноды run_standard_checks_node')
 
@@ -247,12 +257,15 @@ async def run_standard_checks_node(state: AnalyzeAgentState) -> AnalyzeAgentStat
     }
 
 
+# Просит агента решить, нужны ли дополнительные SQL-проверки
 async def plan_custom_checks(state: AnalyzeAgentState) -> AnalyzeAgentState:
     logger.info(f'Вызов ноды plan_custom_checks')
 
     settings = get_settings()
     custom_sql_count = state['custom_sql_count']
     custom_check_iterations = state['custom_check_iterations']
+
+    # Остановка цикла по планированию запросов, при достижении лимит итераций или запросов
 
     if custom_check_iterations >= settings.analyze_max_custom_check_iterations:
         logger.info(f'Лимит итераций custom SQL исчерпан: {custom_check_iterations}')
@@ -278,6 +291,7 @@ async def plan_custom_checks(state: AnalyzeAgentState) -> AnalyzeAgentState:
             }
         }
 
+    # Планировщик получает только сжатый контекст, чтобы не раздувать промпт
     client = get_openai_client()
     planner_input = build_custom_check_input(state)
     planner_system_prompt = render_prompt(
@@ -291,6 +305,7 @@ async def plan_custom_checks(state: AnalyzeAgentState) -> AnalyzeAgentState:
         input=planner_input
     )
 
+    # Агент обязан вернуть объект с флагом need_more_checks и списком SQL
     custom_check_plan = parse_llm_json(response.output_text)
     custom_check_plan.setdefault('need_more_checks', False)
     custom_check_plan.setdefault('reason', '')
@@ -304,13 +319,13 @@ async def plan_custom_checks(state: AnalyzeAgentState) -> AnalyzeAgentState:
     else:
         for sql_query in sql_queries:
             if not isinstance(sql_query, dict):
-                raise ValueError('LLM вернула custom SQL не в формате объекта')
+                raise ValueError('Агент вернул custom SQL не в формате объекта')
 
             for field_name in ['name', 'purpose', 'query']:
                 if field_name not in sql_query:
                     raise ValueError(f'В custom SQL-плане нет поля {field_name}')
 
-    logger.info(f'LLM предложила custom SQL-запросов: {len(sql_queries)}')
+    logger.info(f'Агент предложил custom SQL-запросов: {len(sql_queries)}')
 
     return {
         **state,
@@ -318,6 +333,7 @@ async def plan_custom_checks(state: AnalyzeAgentState) -> AnalyzeAgentState:
     }
 
 
+# Выполняет SQL-запросы, которые предложил агент, и сохраняет результаты
 async def run_custom_checks(state: AnalyzeAgentState) -> AnalyzeAgentState:
     logger.info(f'Вызов ноды run_custom_checks')
 
@@ -330,6 +346,7 @@ async def run_custom_checks(state: AnalyzeAgentState) -> AnalyzeAgentState:
     max_queries = min(settings.analyze_custom_sql_per_iteration_limit, remaining_limit)
     sql_queries = plan['sql_queries'][:max_queries]
 
+    # Повторные запросы считаем использованной попыткой, но не гоняем в БД снова
     executed_queries = {
         result['query']
         for result in custom_sql_results
@@ -387,6 +404,7 @@ async def run_custom_checks(state: AnalyzeAgentState) -> AnalyzeAgentState:
     }
 
 
+# Передает найденные аномалии и custom SQL-результаты агенту для финального ответа
 async def final_anomaly_answer(state: AnalyzeAgentState) -> AnalyzeAgentState:
     logger.info(f'Вызов ноды final_anomaly_answer')
 

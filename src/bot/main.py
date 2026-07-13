@@ -42,16 +42,16 @@ async def ask_agent(message):
 
     try:
         # https://reference.langchain.com/python/langgraph/pregel/remote/RemoteGraph/ainvoke
-        logger.info(f'Вызов AI-агента')
+        logger.info(f'Вызов агента')
         agent_result = await ask_graph.ainvoke({
             'prompt': user_prompt,
         })
     except Exception:
-        logger.exception('Ошибка вызова AI-агента')
-        await message.answer('Не удалось получить ответ от AI-агента')
+        logger.exception('Ошибка вызова агента')
+        await message.answer('Не удалось получить ответ от агента')
         return
 
-    logger.info(f'AI-агент вернул ответ')
+    logger.info(f'Агент вернул ответ')
     await message.answer(agent_result['answer'], parse_mode=ParseMode.HTML)
 
 

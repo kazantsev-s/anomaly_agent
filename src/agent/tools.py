@@ -136,40 +136,39 @@ async def profile_table(schema: dict):
         # Базовые метрики есть у каждой колонки, типовые метрики зависят от типа данных
         column_name = column['column_name']
         data_type = column['data_type']
-        column_sql = column_name
 
         column_profile = {
             'data_type': data_type,
-            'null_count': await fetch_value(f'SELECT COUNT(*) FROM {table_sql} WHERE {column_sql} IS NULL'),
-            'unique_count': await fetch_value(f'SELECT COUNT(DISTINCT {column_sql}) FROM {table_sql}'),
+            'null_count': await fetch_value(f'SELECT COUNT(*) FROM {table_sql} WHERE {column_name} IS NULL'),
+            'unique_count': await fetch_value(f'SELECT COUNT(DISTINCT {column_name}) FROM {table_sql}'),
         }
 
         if is_numeric_type(data_type):
             stats = await fetch_all(
                 f'''
                 SELECT
-                    MIN({column_sql}) AS min_value,
-                    MAX({column_sql}) AS max_value,
-                    AVG({column_sql}) AS avg_value,
-                    percentile_cont(0.5) WITHIN GROUP (ORDER BY {column_sql}) AS median_value,
-                    STDDEV_SAMP({column_sql}) AS stddev_value
-                FROM {table_sql} WHERE {column_sql} IS NOT NULL
+                    MIN({column_name}) AS min_value,
+                    MAX({column_name}) AS max_value,
+                    AVG({column_name}) AS avg_value,
+                    percentile_cont(0.5) WITHIN GROUP (ORDER BY {column_name}) AS median_value,
+                    STDDEV_SAMP({column_name}) AS stddev_value
+                FROM {table_sql} WHERE {column_name} IS NOT NULL
                 '''
             )
             column_profile['numeric_stats'] = stats[0] if stats else {}
 
         elif is_text_type(data_type):
-            clean_column_sql = clean_text_sql(column_sql)
+            clean_column_name = clean_text_sql(column_name)
             column_profile['empty_count'] = await fetch_value(
-                f"SELECT COUNT(*) FROM {table_sql} WHERE {column_sql} IS NOT NULL AND {clean_column_sql} = ''"
+                f"SELECT COUNT(*) FROM {table_sql} WHERE {column_name} IS NOT NULL AND {clean_column_name} = ''"
             )
             column_profile['unknown_count'] = await fetch_value(
-                f"SELECT COUNT(*) FROM {table_sql} WHERE lower({clean_column_sql}) = 'unknown'"
+                f"SELECT COUNT(*) FROM {table_sql} WHERE lower({clean_column_name}) = 'unknown'"
             )
             column_profile['top_values'] = await fetch_all(
                 f'''
-                SELECT {clean_column_sql}::text AS value, COUNT(*) AS count
-                FROM {table_sql} WHERE {column_sql} IS NOT NULL
+                SELECT {clean_column_name}::text AS value, COUNT(*) AS count
+                FROM {table_sql} WHERE {column_name} IS NOT NULL
                 GROUP BY value ORDER BY count DESC
                 LIMIT 5
                 '''
@@ -179,9 +178,9 @@ async def profile_table(schema: dict):
             stats = await fetch_all(
                 f'''
                 SELECT
-                    MIN({column_sql}) AS min_value,
-                    MAX({column_sql}) AS max_value
-                FROM {table_sql} WHERE {column_sql} IS NOT NULL
+                    MIN({column_name}) AS min_value,
+                    MAX({column_name}) AS max_value
+                FROM {table_sql} WHERE {column_name} IS NOT NULL
                 '''
             )
             column_profile['datetime_stats'] = stats[0] if stats else {}
@@ -189,9 +188,9 @@ async def profile_table(schema: dict):
         elif is_boolean_type(data_type):
             column_profile['top_values'] = await fetch_all(
                 f'''
-                SELECT {column_sql}::text AS value, COUNT(*) AS count
-                FROM {table_sql} WHERE {column_sql} IS NOT NULL
-                GROUP BY {column_sql} ORDER BY count DESC
+                SELECT {column_name}::text AS value, COUNT(*) AS count
+                FROM {table_sql} WHERE {column_name} IS NOT NULL
+                GROUP BY {column_name} ORDER BY count DESC
                 LIMIT 5
                 '''
             )
@@ -321,7 +320,7 @@ async def check_numeric_outliers(schema: dict):
                     sample_rows,
                 ))
 
-        # IQR дает простой статистический порог выбросов без передачи всех строк в LLM.
+        # IQR для получения статистических порогов выбросов
         stats = await fetch_all(
             f'''
             SELECT

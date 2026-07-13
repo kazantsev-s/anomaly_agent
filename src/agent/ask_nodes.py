@@ -13,14 +13,7 @@ SQL_SYSTEM_PROMPT = render_prompt(load_prompt('ask/sql_system.prompt.md'), field
 ANSWER_SYSTEM_PROMPT = load_prompt('ask/answer_system.prompt.md')
 ANSWER_USER_PROMPT_TEMPLATE = load_prompt('ask/answer_user.prompt.md')
 
-# Вспомогательные функции
-
-def clean_sql_query(sql_query: str) -> str:
-    query = strip_markdown_code_block(sql_query, 'sql')
-    return query.rstrip(';').strip()
-
-
-# Ноды графа агента
+# Ноды графа
 
 # Нода: превращает вопрос пользователя в запрос к таблице
 async def generate_sql_query(state: AskAgentState) -> AskAgentState:
@@ -35,8 +28,8 @@ async def generate_sql_query(state: AskAgentState) -> AskAgentState:
         input=state['prompt']
     )
 
-    sql_query = clean_sql_query(response.output_text)
-    logger.info(f'AI-агент сгенерировал SQL-запрос: {sql_query}')
+    sql_query = strip_markdown_code_block(response.output_text, 'sql').rstrip(';').strip()
+    logger.info(f'Агент сгенерировал SQL-запрос: {sql_query}')
 
     return {
         **state,
@@ -83,8 +76,8 @@ async def answer(state: AskAgentState) -> AskAgentState:
         instructions=ANSWER_SYSTEM_PROMPT,
         input=user_prompt,
     )
-    
-    logger.info(f'AI-агент вернул ответ: {response.output_text}')
+
+    logger.info(f'Агент вернул ответ: {response.output_text}')
 
     return {
         **state,

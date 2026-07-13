@@ -1,8 +1,9 @@
-import logging
 import asyncpg
 from config import get_settings
+from logger import init_logger
 
-logger = logging.getLogger(__name__)
+logger = init_logger()
+
 KOLESA_COLUMNS = (
     'kolesa_id',
     'kolesa_url',
