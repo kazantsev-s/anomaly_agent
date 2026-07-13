@@ -11,6 +11,8 @@ class Settings:
         self.postgres_db = os.getenv('POSTGRES_DB')
         self.postgres_user = os.getenv('POSTGRES_USER')
         self.postgres_password = os.getenv('POSTGRES_PASSWORD')
+        self.logging_enabled = os.getenv('LOGGING_ENABLED') == 'true'
+        self.log_file = os.getenv('LOG_FILE')
         self.log_level = os.getenv('LOG_LEVEL')
         self.log_format = os.getenv('LOG_FORMAT')
         self.kolesa_table_sql_path = os.getenv('KOLESA_TABLE_SQL_PATH')
