@@ -502,8 +502,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 222609623,https://kolesa.kz/a/show/222609623?search_id=3ab78c9c39fba83756b9b472b6975c5f90001947&search_type=filter&advert_position=681,2026-06-08 21:56:25.013957+03:00,Audi,A4,"    1994 - 1999 B5
 ",1996,"Кокшетау, Акмолинская область",Седан,бензин,2.6,168352,Автомат,Передний привод,Слева,красный,Да,12,2800000,222609623.webp,https://kolesa-photos.kcdn.online/webp/ba/baeba703-bd68-435d-9b72-a1f7c6132d31/1-750x470.webp,False
 206250015,https://kolesa.kz/a/show/206250015?search_id=3ab78c9c39fba83756b9b472b6975c5f90001947&search_type=filter&advert_position=682,2026-06-08 21:56:44.758957+03:00,Audi,e-tron Sportback,"    2019 - н.в. 1 поколение (GE)
-",2020,"Алматы, Алматинская область",Кроссовер,"    Электрический
-",0.0,70000,Автомат,Полный привод,Слева,unknown,Да,14,29000000,206250015.webp,https://kolesa-photos.kcdn.online/webp/79/7986526d-407d-46df-802d-a08db6ebc881/35-750x470.webp,True
+",2020,"Алматы, Алматинская область",Кроссовер,"электрический",0.0,70000,Автомат,Полный привод,Слева,unknown,Да,14,29000000,206250015.webp,https://kolesa-photos.kcdn.online/webp/79/7986526d-407d-46df-802d-a08db6ebc881/35-750x470.webp,True
 221160906,https://kolesa.kz/a/show/221160906?search_id=3ab78c9c39fba83756b9b472b6975c5f90001947&search_type=filter&advert_position=683,2026-06-08 21:56:57.248387+03:00,Audi,100,"    1990 - 1994 4 поколение (C4)
 ",1992,"Астана, Акмолинская область",Универсал,бензин,2.6,300000,Механика,Передний привод,Слева,красный,Да,5,2100000,221160906.webp,https://kolesa-photos.kcdn.online/webp/c3/c3c61975-d61f-4572-ae0f-a1daa4d28738/2-750x470.webp,True
 189034812,https://kolesa.kz/a/show/189034812?search_id=3ab78c9c39fba83756b9b472b6975c5f90001947&search_type=filter&advert_position=685,2026-06-08 21:57:22.631060+03:00,Audi,TT,"    2003 - 2006 1 поколение рестайлинг (8N)
@@ -519,8 +518,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 222606128,https://kolesa.kz/a/show/222606128?search_id=3ab78c9c39fba83756b9b472b6975c5f90001947&search_type=filter&advert_position=692,2026-06-08 21:58:58.016345+03:00,Audi,A6,"    1997 - 2001 C5
 ",1997,"Шахтинск, Карагандинская область",Седан,бензин,2.4,270000,Автомат,Передний привод,Слева,серебристый металлик,Да,22,3900000,222606128.webp,https://kolesa-photos.kcdn.online/webp/06/06f9f59d-31ec-42c0-9e4f-a1f7ba07b370/3-750x470.webp,True
 178642575,https://kolesa.kz/a/show/178642575?search_id=3ab78c9c39fba83756b9b472b6975c5f90001947&search_type=filter&advert_position=693,2026-06-08 21:59:12.934088+03:00,Audi,e-tron,"    2018 - н.в. 1 поколение (GE)
-",2019,"Алматы, Алматинская область",Кроссовер,"    Электрический
-",0.0,34000,Автомат,Полный привод,Слева,зеленый,Да,14,16000000,178642575.webp,https://kolesa-photos.kcdn.online/webp/e1/e1a2eda0-b485-46c5-9fc3-9d86845ab8f3/17-750x470.webp,True
+",2019,"Алматы, Алматинская область",Кроссовер,"электрический",0.0,34000,Автомат,Полный привод,Слева,зеленый,Да,14,16000000,178642575.webp,https://kolesa-photos.kcdn.online/webp/e1/e1a2eda0-b485-46c5-9fc3-9d86845ab8f3/17-750x470.webp,True
 222606507,https://kolesa.kz/a/show/222606507?search_id=3ab78c9c39fba83756b9b472b6975c5f90001947&search_type=filter&advert_position=694,2026-06-08 21:59:28.182491+03:00,Audi,A8,"    2005 - 2007 2 поколение рестайлинг (A8)
 ",2005,"Шымкент, Туркестанская область",Седан,дизель,3.0,350000,Автомат,Полный привод,Слева,unknown,Да,0,3000000,222606507.webp,https://kolesa-photos.kcdn.online/webp/b0/b0f1c8b8-26cd-4845-93ff-a1f7bb4d4c0d/1-750x470.webp,True
 222605901,https://kolesa.kz/a/show/222605901?search_id=3ab78c9c39fba83756b9b472b6975c5f90001947&search_type=filter&advert_position=695,2026-06-08 21:59:41.862541+03:00,Audi,A6,"    1994 - 1997 C4
@@ -558,8 +556,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 222596866,https://kolesa.kz/a/show/222596866?search_id=75509a2a3230becb6526b5988f939a74f29943ed&search_type=filter&advert_position=724,2026-06-08 22:18:44.301007+03:00,Audi,Q7,"    2005 - 2009 1 поколение (4L)
 ",2008,"Тараз, Жамбылская область",Кроссовер,бензин,4.2,289000,Автомат,Полный привод,Слева,белый металлик,Да,6,8790000,222596866.webp,https://kolesa-photos.kcdn.online/webp/92/92c4077c-31b8-49e2-a204-a1f79b789653/2-750x470.webp,True
 222591504,https://kolesa.kz/a/show/222591504?search_id=75509a2a3230becb6526b5988f939a74f29943ed&search_type=filter&advert_position=727,2026-06-08 22:19:24.688541+03:00,Audi,e-tron Sportback,"    2019 - н.в. 1 поколение (GE)
-",2021,"Алматы, Алматинская область",Кроссовер,"    Электрический
-",0.0,32285,Автомат,Полный привод,Слева,черный,Да,28,22000000,222591504.webp,https://kolesa-photos.kcdn.online/webp/4d/4db1019e-2ad1-4f95-a955-a1f78d7cd9f9/2-750x470.webp,True
+",2021,"Алматы, Алматинская область",Кроссовер,"электрический",0.0,32285,Автомат,Полный привод,Слева,черный,Да,28,22000000,222591504.webp,https://kolesa-photos.kcdn.online/webp/4d/4db1019e-2ad1-4f95-a955-a1f78d7cd9f9/2-750x470.webp,True
 222592491,https://kolesa.kz/a/show/222592491?search_id=75509a2a3230becb6526b5988f939a74f29943ed&search_type=filter&advert_position=730,2026-06-08 22:20:02.316963+03:00,Audi,100,"    1990 - 1994 4 поколение (C4)
 ",1992,"Семей, Абайская область",Седан,бензин,2.0,111111,Механика,Передний привод,Слева,красный металлик,Да,4,2000000,222592491.webp,https://kolesa-photos.kcdn.online/webp/68/6899c9bf-07a9-41a0-ae09-a1f790004768/2-750x470.webp,True
 208376921,https://kolesa.kz/a/show/208376921?search_id=75509a2a3230becb6526b5988f939a74f29943ed&search_type=filter&advert_position=731,2026-06-08 22:20:18.076296+03:00,Audi,Q8,"    2018 - н.в. 1 поколение (4MN)
@@ -1217,8 +1214,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 217076623,https://kolesa.kz/a/show/217076623?search_id=a09d116e0c2d69bf717d642f5da97c65c008dd6a&search_type=filter&advert_position=142,2026-06-06 01:23:03.805820+03:00,BMW,530,"    2016 - 2020 G30
 ",2018,"Алматы, Алматинская область",Седан,гибрид,2.0,160000,Автомат,Задний привод,Слева,unknown,Да,29,15000000,217076623.webp,https://kolesa-photos.kcdn.online/webp/7e/7ee65814-57d4-4fd6-9f0e-a18c2cffdfe9/3-750x470.webp,True
 207037969,https://kolesa.kz/a/show/207037969?search_id=a09d116e0c2d69bf717d642f5da97c65c008dd6a&search_type=filter&advert_position=143,2026-06-06 01:23:10.559746+03:00,BMW,i3,"    2022 - н.в. I (G28)
-",2023,"Астана, Акмолинская область",Седан,"    Электрический
-",0.0,18500,Автомат,Задний привод,Слева,бирюзовый металлик,Да,16,18000000,207037969.webp,https://kolesa-photos.kcdn.online/webp/82/82a13fee-8efa-4659-a3cd-a0a2464ad5c8/2-750x470.webp,True
+",2023,"Астана, Акмолинская область",Седан,"электрический",0.0,18500,Автомат,Задний привод,Слева,бирюзовый металлик,Да,16,18000000,207037969.webp,https://kolesa-photos.kcdn.online/webp/82/82a13fee-8efa-4659-a3cd-a0a2464ad5c8/2-750x470.webp,True
 215506751,https://kolesa.kz/a/show/215506751?search_id=a09d116e0c2d69bf717d642f5da97c65c008dd6a&search_type=filter&advert_position=144,2026-06-06 01:23:18.261666+03:00,BMW,Z4,"    2009 - 2016 E89
 ",2014,"Астана, Акмолинская область",Родстер,бензин,3.0,96000,Робот,Задний привод,Слева,синий металлик,Да,25,19000000,215506751.webp,https://kolesa-photos.kcdn.online/webp/45/45fd71f1-cf2a-43b7-a8d0-a16a7439f476/37-750x470.webp,True
 196507707,https://kolesa.kz/a/show/196507707?search_id=a09d116e0c2d69bf717d642f5da97c65c008dd6a&search_type=filter&advert_position=146,2026-06-06 01:23:32.380269+03:00,BMW,X3,"    2021 - 2024 G01 рестайлинг (G01)
@@ -1236,8 +1232,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 199442916,https://kolesa.kz/a/show/199442916?search_id=a09d116e0c2d69bf717d642f5da97c65c008dd6a&search_type=filter&advert_position=155,2026-06-06 01:24:40.116654+03:00,BMW,530,"    2016 - 2020 G30
 ",2017,"Астана, Акмолинская область",Седан,бензин,2.0,125000,Автомат,Полный привод,Слева,белый,Да,7,15500000,199442916.webp,https://kolesa-photos.kcdn.online/webp/0d/0de05fff-cfad-459a-87f6-9fea3d7d6f8d/1-750x470.webp,True
 213108336,https://kolesa.kz/a/show/213108336?search_id=a09d116e0c2d69bf717d642f5da97c65c008dd6a&search_type=filter&advert_position=156,2026-06-06 01:24:46.548259+03:00,BMW,i5,"    2023 - н.в. 1 поколение 
-",2024,"Алматы, Алматинская область",Седан,"    Электрический
-",0.0,10000,Автомат,Полный привод,Слева,unknown,Да,3,39000000,213108336.webp,https://kolesa-photos.kcdn.online/webp/d8/d871ab1a-eaa4-471f-bdb3-a133eb8737e4/1-750x470.webp,True
+",2024,"Алматы, Алматинская область",Седан,"электрический",0.0,10000,Автомат,Полный привод,Слева,unknown,Да,3,39000000,213108336.webp,https://kolesa-photos.kcdn.online/webp/d8/d871ab1a-eaa4-471f-bdb3-a133eb8737e4/1-750x470.webp,True
 219903648,https://kolesa.kz/a/show/219903648?search_id=a09d116e0c2d69bf717d642f5da97c65c008dd6a&search_type=filter&advert_position=157,2026-06-06 01:24:55.530578+03:00,BMW,X5,"    2013 - 2018 F15 (F15/F85)
 ",2017,"Шымкент, Туркестанская область",Кроссовер,бензин,3.0,210000,Автомат,Полный привод,Слева,серебристый металлик,Да,27,17600000,219903648.webp,https://kolesa-photos.kcdn.online/webp/dd/dd425828-e093-479d-be94-a1c2462d0ea4/2-750x470.webp,True
 222343038,https://kolesa.kz/a/show/222343038?search_id=a09d116e0c2d69bf717d642f5da97c65c008dd6a&search_type=filter&advert_position=158,2026-06-06 01:25:04.993796+03:00,BMW,525,"    2000 - 2004 E39 рестайлинг
@@ -1783,8 +1778,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 222652982,https://kolesa.kz/a/show/222652982?search_id=d1f58a605eb77fa75fbbffaf0a3f24f361d5bf0f&search_type=filter&advert_position=345,2026-06-08 15:47:01.926661+03:00,Audi,S4,"    1991 - 1994 C4
 ",1993,"Сарыагаш, Туркестанская область",Седан,газ-бензин,2.6,345554,Механика,Передний привод,Слева,unknown,Да,11,2000000,222652982.webp,https://kolesa-photos.kcdn.online/webp/15/153a48c4-a070-4c7c-90d5-a1f92e04d95b/1-750x470.webp,True
 221979508,https://kolesa.kz/a/show/221979508?search_id=d1f58a605eb77fa75fbbffaf0a3f24f361d5bf0f&search_type=filter&advert_position=346,2026-06-08 15:47:14.543494+03:00,Audi,e-tron Sportback,"    2019 - н.в. 1 поколение (GE)
-",2020,"Алматы, Алматинская область",Кроссовер,"    Электрический
-",0.0,42000,Автомат,Полный привод,Слева,unknown,Да,58,30000000,221979508.webp,https://kolesa-photos.kcdn.online/webp/ff/ff0e8fd5-fb9d-47f8-bf70-a1eb19bffbc3/32-750x470.webp,True
+",2020,"Алматы, Алматинская область",Кроссовер,"электрический",0.0,42000,Автомат,Полный привод,Слева,unknown,Да,58,30000000,221979508.webp,https://kolesa-photos.kcdn.online/webp/ff/ff0e8fd5-fb9d-47f8-bf70-a1eb19bffbc3/32-750x470.webp,True
 222652626,https://kolesa.kz/a/show/222652626?search_id=d1f58a605eb77fa75fbbffaf0a3f24f361d5bf0f&search_type=filter&advert_position=348,2026-06-08 15:47:42.408699+03:00,Audi,A4,"    1994 - 1999 B5
 ",1995,"Серебрянск, Восточно-Казахстанская область",Седан,бензин,1.8,358602,Автомат,Полный привод,Слева,серебристый,Да,10,2100000,222652626.webp,https://kolesa-photos.kcdn.online/webp/80/80cb22c9-f01a-4723-8027-a1f92c8b6b93/3-750x470.webp,True
 221908746,https://kolesa.kz/a/show/221908746?search_id=d1f58a605eb77fa75fbbffaf0a3f24f361d5bf0f&search_type=filter&advert_position=350,2026-06-08 15:48:12.346246+03:00,Audi,A6,"    1994 - 1997 C4
@@ -1848,8 +1842,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 221748494,https://kolesa.kz/a/show/221748494?search_id=22f17c3ee7615eb9b5dd0895b2026b6f94ca6d01&search_type=filter&advert_position=420,2026-06-08 16:16:12.107111+03:00,Audi,A6,"    1994 - 1997 C4
 ",1995,"Астана, Акмолинская область",Седан,бензин,2.0,612111,Механика,Передний привод,Слева,unknown,Да,5,2000000,221748494.webp,https://kolesa-photos.kcdn.online/webp/25/25468014-b057-4ff2-9a59-a1e668589e21/2-750x470.webp,True
 215407974,https://kolesa.kz/a/show/215407974?search_id=defc9852d13c14921a30f117f7bbf39a5310210c&search_type=filter&advert_position=424,2026-06-08 16:17:45.991426+03:00,Audi,Q8 e-tron,"    2022 - н.в. 1 поколение 
-",2024,"Алматы, Алматинская область",Кроссовер,"    Электрический
-",0.0,350,Автомат,Полный привод,Слева,черный металлик,Да,5,38000000,215407974.webp,https://kolesa-photos.kcdn.online/webp/82/82e8416f-c6b1-4a34-9a88-a1685104df1b/2-750x470.webp,True
+",2024,"Алматы, Алматинская область",Кроссовер,"электрический",0.0,350,Автомат,Полный привод,Слева,черный металлик,Да,5,38000000,215407974.webp,https://kolesa-photos.kcdn.online/webp/82/82e8416f-c6b1-4a34-9a88-a1685104df1b/2-750x470.webp,True
 222635207,https://kolesa.kz/a/show/222635207?search_id=defc9852d13c14921a30f117f7bbf39a5310210c&search_type=filter&advert_position=425,2026-06-08 16:18:01.086848+03:00,Audi,Q7,"    2009 - 2015 1 поколение рестайлинг (4L)
 ",2010,"Астана, Акмолинская область",Кроссовер,бензин,3.0,256090,Автомат,Полный привод,Слева,unknown,Да,12,6714000,222635207.webp,https://kolesa-photos.kcdn.online/webp/b0/b02c24cb-3626-4a55-9984-a1f8e71fcdb7/5-750x470.webp,True
 219148293,https://kolesa.kz/a/show/219148293?search_id=defc9852d13c14921a30f117f7bbf39a5310210c&search_type=filter&advert_position=428,2026-06-08 16:18:39.773609+03:00,Audi,A6,"    2011 - 2014 C7
@@ -2189,8 +2182,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 206453261,https://kolesa.kz/a/show/206453261?fromUserSearch=1&search_id=3e4a5165cc33db3e8e9efff320bdc971dd9819b9&search_type=filter&advert_position=1118,2026-06-09 00:38:36.623017+03:00,Kia,K9,"    2018 - 2021 2 поколение
 ",2018,"Шымкент, Туркестанская область",Седан,бензин,3.3,123116,Автомат,Полный привод,Слева,серый,Да,25,9960000,206453261.webp,https://kolesa-photos.kcdn.online/webp/b6/b629a6b4-00cd-4aa6-ae1e-a09335b61d29/1-750x470.webp,True
 206690075,https://kolesa.kz/a/show/206690075?fromUserSearch=1&search_id=3e4a5165cc33db3e8e9efff320bdc971dd9819b9&search_type=filter&advert_position=1119,2026-06-09 00:38:49.856263+03:00,Kia,K3,"    2021 - н.в. 2 поколение рестайлинг
-",2021,"Шымкент, Туркестанская область",Седан,"    Электрический
-",0.0,98399,Автомат,Передний привод,Слева,белый,Да,25,5120000,206690075.webp,https://kolesa-photos.kcdn.online/webp/46/46277aa7-64fc-4e77-aa3a-a0995662c0ef/1-750x470.webp,True
+",2021,"Шымкент, Туркестанская область",Седан,"электрический",0.0,98399,Автомат,Передний привод,Слева,белый,Да,25,5120000,206690075.webp,https://kolesa-photos.kcdn.online/webp/46/46277aa7-64fc-4e77-aa3a-a0995662c0ef/1-750x470.webp,True
 219156427,https://kolesa.kz/a/show/219156427?fromUserSearch=1&search_id=3e4a5165cc33db3e8e9efff320bdc971dd9819b9&search_type=filter&advert_position=1120,2026-06-09 00:39:03.003694+03:00,Kia,Rio,"    2017 - 2020 4 поколение
 ",2020,"Алматы, Алматинская область",Седан,бензин,1.6,50242,Автомат,Передний привод,Слева,белый,Да,24,6230000,219156427.webp,https://kolesa-photos.kcdn.online/webp/90/90be5b02-8859-43ec-a221-a1b2de0bd90e/1-750x470.webp,True
 212180995,https://kolesa.kz/a/show/212180995?fromUserSearch=1&search_id=27dd5b77d77126c5d020123f167264fb0f432ccd&search_type=filter&advert_position=1122,2026-06-09 00:40:05.884634+03:00,Kia,Optima,"    2010 - 2013 3 поколение (FSGDS6B)
@@ -2334,8 +2326,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 221781630,https://kolesa.kz/a/show/221781630?search_id=87638948183c2b0a8bb7bcf50bb5e548f8c26a0a&search_type=filter&advert_position=1590,2026-06-11 13:43:39.689866+03:00,BMW,X5,"    2018 - н.в. G05
 ",2022,"Алматы, Алматинская область",Кроссовер,бензин,3.0,20000,Автомат,Полный привод,Слева,синий,Да,21,42000000,221781630.webp,https://kolesa-photos.kcdn.online/webp/3f/3faf8697-655e-4440-a788-a1e7089c4f73/4-750x470.webp,True
 209230597,https://kolesa.kz/a/show/209230597?search_id=87638948183c2b0a8bb7bcf50bb5e548f8c26a0a&search_type=filter&advert_position=1591,2026-06-11 13:43:51.975335+03:00,BMW,iX1,"    2022 - н.в. 1 поколение (U11)
-",2025,"Алматы, Алматинская область",Кроссовер,"    Электрический
-",0.0,20,Автомат,Передний привод,Слева,белый,Да,23,18500000,209230597.webp,https://kolesa-photos.kcdn.online/webp/a5/a5f42425-0d11-4c1a-91ff-a0d9529cee4b/2-750x470.webp,True
+",2025,"Алматы, Алматинская область",Кроссовер,"электрический",0.0,20,Автомат,Передний привод,Слева,белый,Да,23,18500000,209230597.webp,https://kolesa-photos.kcdn.online/webp/a5/a5f42425-0d11-4c1a-91ff-a0d9529cee4b/2-750x470.webp,True
 222576494,https://kolesa.kz/a/show/222576494?search_id=87638948183c2b0a8bb7bcf50bb5e548f8c26a0a&search_type=filter&advert_position=1594,2026-06-11 13:44:29.192476+03:00,BMW,520,"    2020 - н.в. G30 рестайлинг
 ",2021,"Астана, Акмолинская область",Седан,бензин,2.0,80000,Автомат,Задний привод,Слева,синий металлик,Да,5,22500000,222576494.webp,https://kolesa-photos.kcdn.online/webp/05/05cb7895-e467-4db9-8445-a1f7552557fb/4-750x470.webp,True
 221842720,https://kolesa.kz/a/show/221842720?search_id=87638948183c2b0a8bb7bcf50bb5e548f8c26a0a&search_type=filter&advert_position=1595,2026-06-11 13:44:42.661456+03:00,BMW,X5,"    2018 - н.в. G05
@@ -2377,8 +2368,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 222384415,https://kolesa.kz/a/show/222384415?search_id=947093915d3d9bd36ee1638888769ce6f14291df&search_type=filter&advert_position=1639,2026-06-11 13:56:25.668003+03:00,BMW,X5,"    2013 - 2018 F15 (F15/F85)
 ",2015,"Алматы, Алматинская область",Кроссовер,бензин,3.0,198000,Автомат,Полный привод,Слева,unknown,Да,10,16000000,222384415.webp,https://kolesa-photos.kcdn.online/webp/27/27dfbf2b-345c-4f3c-a2b5-a1f33090453e/3-750x470.webp,True
 222395005,https://kolesa.kz/a/show/222395005?search_id=947093915d3d9bd36ee1638888769ce6f14291df&search_type=filter&advert_position=1640,2026-06-11 13:56:40.223586+03:00,BMW,iX,"    2021 - н.в. 1 поколение
-",2023,"Алматы, Алматинская область",Кроссовер,"    Электрический
-",0.0,22000,Автомат,Полный привод,Слева,черный,Да,9,37000000,222395005.webp,https://kolesa-photos.kcdn.online/webp/e9/e9271f1a-fe91-4d89-b12d-a1f35e7997e4/4-750x470.webp,True
+",2023,"Алматы, Алматинская область",Кроссовер,"электрический",0.0,22000,Автомат,Полный привод,Слева,черный,Да,9,37000000,222395005.webp,https://kolesa-photos.kcdn.online/webp/e9/e9271f1a-fe91-4d89-b12d-a1f35e7997e4/4-750x470.webp,True
 222774868,https://kolesa.kz/a/show/222774868?search_id=11dd6d0e182fdf099b1ea98891aaea798eb054eb&search_type=filter&advert_position=1644,2026-06-11 13:58:11.381163+03:00,BMW,520,"    1988 - 1996 E34
 ",1994,"Семей, Абайская область",Седан,бензин,2.0,320000,Механика,Задний привод,Слева,синий металлик,Да,8,2800000,222774868.webp,https://kolesa-photos.kcdn.online/webp/c4/c4d1a354-f5c1-4f13-b2a1-a1fb9b350c36/2-750x470.webp,True
 193779188,https://kolesa.kz/a/show/193779188?search_id=11dd6d0e182fdf099b1ea98891aaea798eb054eb&search_type=filter&advert_position=1645,2026-06-11 13:58:24.250350+03:00,BMW,X6,"    2007 - 2012 E71 (E71/E72)
@@ -2442,8 +2432,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 209924590,https://kolesa.kz/a/show/209924590?search_id=61a6afdaeb3e138488082643e756bd4eb606570a&search_type=filter&advert_position=1690,2026-06-11 14:10:09.435413+03:00,BMW,X5,"    2023 - н.в. G05 рестайлинг
 ",2023,"Алматы, Алматинская область",Кроссовер,бензин,3.0,79217,Автомат,Полный привод,Слева,черный,Да,19,38000000,209924590.webp,https://kolesa-photos.kcdn.online/webp/c5/c542039b-f829-4b4e-9ebe-a0e9a33759fc/20-750x470.webp,True
 172960046,https://kolesa.kz/a/show/172960046?search_id=61a6afdaeb3e138488082643e756bd4eb606570a&search_type=filter&advert_position=1691,2026-06-11 14:10:22.649468+03:00,BMW,i3,"    2013 - 2017 I01
-",2016,"Алматы, Алматинская область",Хэтчбек,"    Электрический
-",0.0,95000,Автомат,Задний привод,Слева,белый,Да,16,5000000,172960046.webp,https://kolesa-photos.kcdn.online/webp/3f/3f0f78f2-64b7-4638-a70f-9c7b3dfdb4ea/4-750x470.webp,True
+",2016,"Алматы, Алматинская область",Хэтчбек,"электрический",0.0,95000,Автомат,Задний привод,Слева,белый,Да,16,5000000,172960046.webp,https://kolesa-photos.kcdn.online/webp/3f/3f0f78f2-64b7-4638-a70f-9c7b3dfdb4ea/4-750x470.webp,True
 206527975,https://kolesa.kz/a/show/206527975?search_id=61a6afdaeb3e138488082643e756bd4eb606570a&search_type=filter&advert_position=1693,2026-06-11 14:10:52.690265+03:00,BMW,528,"    2013 - 2017 F10/F11/F07 рестайлинг
 ",2014,"Тараз, Жамбылская область",Седан,бензин,2.0,215000,Автомат,Полный привод,Слева,серебристый металлик,Да,23,12000000,206527975.webp,https://kolesa-photos.kcdn.online/webp/f8/f89f2d91-2a8f-4376-9f8a-a0953958ecad/19-750x470.webp,True
 222152209,https://kolesa.kz/a/show/222152209?search_id=61a6afdaeb3e138488082643e756bd4eb606570a&search_type=filter&advert_position=1694,2026-06-11 14:11:06.740602+03:00,BMW,X5,"    2018 - н.в. G05
@@ -3103,8 +3092,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 220587979,https://kolesa.kz/a/show/220587979?search_id=c7e92347a8639a179ac095ddd707d65647963944&search_type=filter&advert_position=1373,2026-06-11 03:53:42.629092+03:00,Lexus,LS 460,"    2012 - 2019 4 поколение [2-й рестайлинг]
 ",2014,"Астана, Акмолинская область",Седан,бензин,4.6,186000,Автомат,Полный привод,Слева,unknown,Да,5,13000000,220587979.webp,https://kolesa-photos.kcdn.online/webp/1e/1ed81962-6db1-4e25-b1f4-a1cf28620989/1-750x470.webp,True
 222830606,https://kolesa.kz/a/show/222830606?search_id=c7e92347a8639a179ac095ddd707d65647963944&search_type=filter&advert_position=1374,2026-06-11 03:53:56.797730+03:00,Lexus,RZ,"    2022 - н.в. 1 поколение 
-",2023,"Алматы, Алматинская область",Кроссовер,"    Электрический
-",0.0,15000,Автомат,Полный привод,Слева,unknown,Да,10,27000000,222830606.webp,https://kolesa-photos.kcdn.online/webp/ae/aeca964c-0429-48e1-9dfe-a1fcfe871a4d/3-750x470.webp,True
+",2023,"Алматы, Алматинская область",Кроссовер,"электрический",0.0,15000,Автомат,Полный привод,Слева,unknown,Да,10,27000000,222830606.webp,https://kolesa-photos.kcdn.online/webp/ae/aeca964c-0429-48e1-9dfe-a1fcfe871a4d/3-750x470.webp,True
 222268946,https://kolesa.kz/a/show/222268946?search_id=c7e92347a8639a179ac095ddd707d65647963944&search_type=filter&advert_position=1375,2026-06-11 03:54:11.437428+03:00,Lexus,LX 570,"    2007 - 2012 3 поколение (J2)
 ",2009,"Алматы, Алматинская область",Внедорожник,бензин,5.7,420000,Автомат,Полный привод,Слева,черный металлик,Да,12,15500000,222268946.webp,https://kolesa-photos.kcdn.online/webp/59/59e85eea-18e9-4952-885f-a1f0eb5aab36/4-750x470.webp,True
 211078353,https://kolesa.kz/a/show/211078353?search_id=c7e92347a8639a179ac095ddd707d65647963944&search_type=filter&advert_position=1376,2026-06-11 03:54:23.824649+03:00,Lexus,RX 300,"    1997 - 2003 1 поколение (MCU15)
@@ -3370,8 +3358,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 222238721,https://kolesa.kz/a/show/222238721?search_id=460c3d08b4860fda19b48b19f0c8d4170a77a7fa&search_type=filter&advert_position=143,2026-06-06 01:45:42.556273+03:00,Audi,Q3 Sportback,"    2019 - н.в. 1 поколение (F3)
 ",2020,"Астана, Акмолинская область",Кроссовер,бензин,2.0,47000,Робот,Полный привод,Слева,белый,Да,33,20600000,222238721.webp,https://kolesa-photos.kcdn.online/webp/a8/a8531d08-4f14-4aed-afd3-a1f016f49fe3/1-750x470.webp,True
 212506512,https://kolesa.kz/a/show/212506512?search_id=460c3d08b4860fda19b48b19f0c8d4170a77a7fa&search_type=filter&advert_position=144,2026-06-06 01:45:52.280343+03:00,Audi,Q4 e-tron,"    2021 - н.в. 1 поколение
-",2023,"Шымкент, Туркестанская область",Внедорожник,"    Электрический
-",0.0,35000,Автомат,Задний привод,Слева,unknown,Да,13,19000000,212506512.webp,https://kolesa-photos.kcdn.online/webp/48/48948ead-02b9-4913-ba78-a12637db4e63/4-750x470.webp,True
+",2023,"Шымкент, Туркестанская область",Внедорожник,"электрический",0.0,35000,Автомат,Задний привод,Слева,unknown,Да,13,19000000,212506512.webp,https://kolesa-photos.kcdn.online/webp/48/48948ead-02b9-4913-ba78-a12637db4e63/4-750x470.webp,True
 218840386,https://kolesa.kz/a/show/218840386?search_id=460c3d08b4860fda19b48b19f0c8d4170a77a7fa&search_type=filter&advert_position=146,2026-06-06 01:46:10.215872+03:00,Audi,A4,"    2011 - 2015 B8 рестайлинг
 ",2015,"Актау, Мангистауская область",Седан,бензин,1.8,155400,Вариатор,Передний привод,Слева,коричневый металлик,Да,18,7100000,218840386.webp,https://kolesa-photos.kcdn.online/webp/af/af8797a1-bd85-4e32-9cae-a1ace8ec255a/2-750x470.webp,True
 184690163,https://kolesa.kz/a/show/184690163?search_id=460c3d08b4860fda19b48b19f0c8d4170a77a7fa&search_type=filter&advert_position=160,2026-06-06 01:50:03.277248+03:00,Audi,100,"    1990 - 1994 4 поколение (C4)
@@ -3387,8 +3374,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 221058455,https://kolesa.kz/a/show/221058455?search_id=acb0de53cf9230973453ae8e1c57fc26fb304a32&search_type=filter&advert_position=166,2026-06-06 01:50:56.640701+03:00,Audi,A7,"    2018 - н.в. 2 поколение (A7)
 ",2021,"Астана, Акмолинская область",Лифтбек,бензин,3.0,44000,Робот,Полный привод,Слева,синий,Да,23,34499999,221058455.webp,https://kolesa-photos.kcdn.online/webp/a9/a968c9b1-44bd-4d6b-8fd5-a1d87c1be602/4-750x470.webp,True
 213111570,https://kolesa.kz/a/show/213111570?search_id=acb0de53cf9230973453ae8e1c57fc26fb304a32&search_type=filter&advert_position=167,2026-06-06 01:51:05.243556+03:00,Audi,Q4 e-tron,"    2021 - н.в. 1 поколение
-",2024,"Шымкент, Туркестанская область",Внедорожник,"    Электрический
-",0.0,900,Автомат,Полный привод,Слева,белый,Да,19,15450000,213111570.webp,https://kolesa-photos.kcdn.online/webp/b5/b5479406-8f0b-4e8d-ac6b-a133f92f5958/1-750x470.webp,True
+",2024,"Шымкент, Туркестанская область",Внедорожник,"электрический",0.0,900,Автомат,Полный привод,Слева,белый,Да,19,15450000,213111570.webp,https://kolesa-photos.kcdn.online/webp/b5/b5479406-8f0b-4e8d-ac6b-a133f92f5958/1-750x470.webp,True
 220044070,https://kolesa.kz/a/show/220044070?search_id=acb0de53cf9230973453ae8e1c57fc26fb304a32&search_type=filter&advert_position=168,2026-06-06 01:51:13.106329+03:00,Audi,A8,"    2017 - н.в. 4 поколение (A8)
 ",2019,"Алматы, Алматинская область",Седан,бензин,3.0,235835,Автомат,Полный привод,Слева,unknown,Да,21,18500000,220044070.webp,https://kolesa-photos.kcdn.online/webp/06/062787f5-723a-4cbb-b7ce-a1c4bc22045f/1-750x470.webp,True
 170979930,https://kolesa.kz/a/show/170979930?search_id=acb0de53cf9230973453ae8e1c57fc26fb304a32&search_type=filter&advert_position=169,2026-06-06 01:51:21.198717+03:00,Audi,Q5,"    2017 - н.в. 2 поколение (FY)
@@ -4295,8 +4281,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 221472871,https://kolesa.kz/a/show/221472871?search_id=a54b2c73483caeabce0d96c157ff560e6882595e&search_type=filter&advert_position=439,2026-06-06 15:23:21.551097+03:00,BMW,528,"    2007 - 2010 E60/E61 рестайлинг
 ",2009,"Алматы, Алматинская область",Седан,бензин,3.0,66000,Автомат,Задний привод,Слева,синий металлик,Да,16,13333333,221472871.webp,https://kolesa-photos.kcdn.online/webp/b3/b3181c2f-f68c-4f15-b285-a1e0dc1a04c3/4-750x470.webp,True
 211204723,https://kolesa.kz/a/show/211204723?search_id=c4bb6733c8cf6ef2f641b0392210403b2840f2d5&search_type=filter&advert_position=447,2026-06-06 15:25:42.416432+03:00,BMW,i5,"    2023 - н.в. 1 поколение 
-",2024,"Алматы, Алматинская область",Седан,"    Электрический
-",0.0,45000,Автомат,Задний привод,Слева,белый,Да,20,23900000,211204723.webp,https://kolesa-photos.kcdn.online/webp/43/43e64e45-fcb8-4508-b9f3-a10838222010/4-750x470.webp,True
+",2024,"Алматы, Алматинская область",Седан,"электрический",0.0,45000,Автомат,Задний привод,Слева,белый,Да,20,23900000,211204723.webp,https://kolesa-photos.kcdn.online/webp/43/43e64e45-fcb8-4508-b9f3-a10838222010/4-750x470.webp,True
 222449432,https://kolesa.kz/a/show/222449432?search_id=c4bb6733c8cf6ef2f641b0392210403b2840f2d5&search_type=filter&advert_position=449,2026-06-06 15:26:13.352599+03:00,BMW,X5,"    1999 - 2003 E53
 ",2002,"Алматы, Алматинская область",Кроссовер,бензин,3.0,250000,Механика,Полный привод,Слева,unknown,Да,5,4200000,222449432.webp,https://kolesa-photos.kcdn.online/webp/58/585701d5-c2f1-4cd0-b8d7-a1f4c44f1a4d/3-750x470.webp,True
 204574806,https://kolesa.kz/a/show/204574806?search_id=c4bb6733c8cf6ef2f641b0392210403b2840f2d5&search_type=filter&advert_position=450,2026-06-06 15:26:28.571969+03:00,BMW,X5,"    2018 - н.в. G05
@@ -4756,8 +4741,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 216450186,https://kolesa.kz/a/show/216450186?search_id=1a99165e4ef23222c154415a261155ece7de788d&search_type=filter&advert_position=272,2026-06-06 02:51:08.758007+03:00,BMW,X7,"    2018 - н.в. G07
 ",2021,"Алматы, Алматинская область",Кроссовер,бензин,3.0,98000,Автомат,Полный привод,Слева,черный металлик,Да,24,35000000,216450186.webp,https://kolesa-photos.kcdn.online/webp/6b/6b6f2871-f5fe-48d3-b577-a17e8865496e/1-750x470.webp,True
 222081320,https://kolesa.kz/a/show/222081320?search_id=1a99165e4ef23222c154415a261155ece7de788d&search_type=filter&advert_position=275,2026-06-06 02:51:29.434880+03:00,BMW,iX3,"    2021 - н.в. 1 поколение рестайлинг
-",2023,"Алматы, Алматинская область",Кроссовер,"    Электрический
-",0.0,22000,Автомат,Задний привод,Слева,белый металлик,Да,25,19500000,222081320.webp,https://kolesa-photos.kcdn.online/webp/e3/e3b3087a-7075-4db0-96c6-a1ed1b1d502d/3-750x470.webp,True
+",2023,"Алматы, Алматинская область",Кроссовер,"электрический",0.0,22000,Автомат,Задний привод,Слева,белый металлик,Да,25,19500000,222081320.webp,https://kolesa-photos.kcdn.online/webp/e3/e3b3087a-7075-4db0-96c6-a1ed1b1d502d/3-750x470.webp,True
 222073566,https://kolesa.kz/a/show/222073566?search_id=1a99165e4ef23222c154415a261155ece7de788d&search_type=filter&advert_position=276,2026-06-06 02:51:39.060117+03:00,BMW,X5,"    2023 - н.в. G05 рестайлинг
 ",2025,"Шымкент, Туркестанская область",Кроссовер,бензин,3.0,5000,Автомат,Полный привод,Слева,unknown,Да,9,60000000,222073566.webp,https://kolesa-photos.kcdn.online/webp/af/afe0ad22-7edd-4524-ba7d-a1ecfd94eb44/1-750x470.webp,True
 221288047,https://kolesa.kz/a/show/221288047?search_id=1a99165e4ef23222c154415a261155ece7de788d&search_type=filter&advert_position=277,2026-06-06 02:51:47.621672+03:00,BMW,540,"    1988 - 1996 E34
@@ -5229,8 +5213,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 216531224,https://kolesa.kz/a/show/216531224?search_id=9b5b487730eec8391293790dec32bc90deb16d78&search_type=filter&advert_position=805,2026-06-08 19:02:00.679666+03:00,Lexus,GS 300,"    2004 - 2007 3 поколение (S19)
 ",2006,"Алматы, Алматинская область",Седан,бензин,3.0,289440,Автомат,Задний привод,Слева,unknown,Да,6,4700000,216531224.webp,https://kolesa-photos.kcdn.online/webp/57/57e741fa-fbd3-4ace-96fe-a1806682b146/4-750x470.webp,True
 222456783,https://kolesa.kz/a/show/222456783?search_id=9b5b487730eec8391293790dec32bc90deb16d78&search_type=filter&advert_position=806,2026-06-08 19:02:16.789593+03:00,Lexus,RZ,"    2022 - н.в. 1 поколение 
-",2023,"Талдыкорган, Жетысуская область",Кроссовер,"    Электрический
-",0.0,9000,Автомат,Полный привод,Слева,черный металлик,Да,22,23500000,222456783.webp,https://kolesa-photos.kcdn.online/webp/67/67e03baf-58a2-4710-bfda-a1f4e2a76791/17-750x470.webp,True
+",2023,"Талдыкорган, Жетысуская область",Кроссовер,"электрический",0.0,9000,Автомат,Полный привод,Слева,черный металлик,Да,22,23500000,222456783.webp,https://kolesa-photos.kcdn.online/webp/67/67e03baf-58a2-4710-bfda-a1f4e2a76791/17-750x470.webp,True
 222653441,https://kolesa.kz/a/show/222653441?search_id=9b5b487730eec8391293790dec32bc90deb16d78&search_type=filter&advert_position=807,2026-06-08 19:02:29.125641+03:00,Lexus,RX 300,"    2015 - 2019 4 поколение (L2)
 ",2019,"Алматы, Алматинская область",Кроссовер,бензин,2.0,51070,Автомат,Полный привод,Слева,серый,Да,19,20500000,222653441.webp,https://kolesa-photos.kcdn.online/webp/c7/c706135b-7d78-4784-931e-a1f92fc731d3/1-750x470.webp,True
 212468523,https://kolesa.kz/a/show/212468523?search_id=9b5b487730eec8391293790dec32bc90deb16d78&search_type=filter&advert_position=808,2026-06-08 19:02:45.236203+03:00,Lexus,NX 200,"    2017 - н.в. 1 поколение рестайлинг (Z1)
@@ -7166,8 +7149,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 213164403,https://kolesa.kz/a/show/213164403?search_id=e5f9cb6e6c0f373e7e6a5bf72fba152b403d0b2b&search_type=filter&advert_position=1808,2026-06-11 14:34:23.716662+03:00,Audi,A6,"    1997 - 2001 C5
 ",1998,"Астана, Акмолинская область",Седан,бензин,2.8,100000,Автомат,Полный привод,Слева,синий,Да,7,3100000,213164403.webp,https://kolesa-photos.kcdn.online/webp/87/87999ba9-86de-4b52-9942-a1352dd81fd0/1-750x470.webp,True
 210515569,https://kolesa.kz/a/show/210515569?search_id=e5f9cb6e6c0f373e7e6a5bf72fba152b403d0b2b&search_type=filter&advert_position=1809,2026-06-11 14:34:36.891099+03:00,Audi,e-tron,"    2018 - н.в. 1 поколение (GE)
-",2021,"Алматы, Алматинская область",Кроссовер,"    Электрический
-",0.0,35000,Автомат,Полный привод,Слева,красный металлик,Да,19,30000000,210515569.webp,https://kolesa-photos.kcdn.online/webp/51/51f505e4-b72b-40ad-9c3f-a0f784b3daca/3-750x470.webp,True
+",2021,"Алматы, Алматинская область",Кроссовер,"электрический",0.0,35000,Автомат,Полный привод,Слева,красный металлик,Да,19,30000000,210515569.webp,https://kolesa-photos.kcdn.online/webp/51/51f505e4-b72b-40ad-9c3f-a0f784b3daca/3-750x470.webp,True
 221905749,https://kolesa.kz/a/show/221905749?search_id=e5f9cb6e6c0f373e7e6a5bf72fba152b403d0b2b&search_type=filter&advert_position=1810,2026-06-11 14:34:52.766162+03:00,Audi,A6,"    1994 - 1997 C4
 ",1994,"Алматы, Алматинская область",Седан,бензин,2.6,400000,Механика,Передний привод,Слева,серый металлик,Да,13,2800000,221905749.webp,https://kolesa-photos.kcdn.online/webp/a2/a28024e8-6f51-4d06-a15f-a1e97c5260ee/2-750x470.webp,True
 216550003,https://kolesa.kz/a/show/216550003?search_id=e5f9cb6e6c0f373e7e6a5bf72fba152b403d0b2b&search_type=filter&advert_position=1811,2026-06-11 14:35:08.994782+03:00,Audi,A8,"    2005 - 2007 2 поколение рестайлинг (A8)
@@ -7633,8 +7615,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 188534409,https://kolesa.kz/a/show/188534409?search_id=0b74245a3547e8a99dc3832c252b05eaeaf1aa90&search_type=filter&advert_position=1272,2026-06-11 00:46:46.883455+03:00,Hyundai,Sonata,"    2014 - 2017 7 поколение (LF)
 ",2016,"Уральск, Западно-Казахстанская область",Седан,бензин,2.4,225120,Автомат,Передний привод,Слева,черный,Да,11,6800000,188534409.webp,https://kolesa-photos.kcdn.online/webp/d9/d99dd2e9-3abf-4cdd-9787-9edafcd61a3f/4-750x470.webp,True
 218473723,https://kolesa.kz/a/show/218473723?search_id=0b74245a3547e8a99dc3832c252b05eaeaf1aa90&search_type=filter&advert_position=1274,2026-06-11 00:47:15.991341+03:00,Hyundai,Ioniq,"    2016 - 2019 AE
-",2019,"Астана, Акмолинская область",Лифтбек,"    Электрический
-",0.0,87195,Автомат,Передний привод,Слева,unknown,Да,26,5790000,218473723.webp,https://kolesa-photos.kcdn.online/webp/89/89b781af-d694-42e7-9716-a1a6418749a1/1-750x470.webp,True
+",2019,"Астана, Акмолинская область",Лифтбек,"электрический",0.0,87195,Автомат,Передний привод,Слева,unknown,Да,26,5790000,218473723.webp,https://kolesa-photos.kcdn.online/webp/89/89b781af-d694-42e7-9716-a1a6418749a1/1-750x470.webp,True
 221861159,https://kolesa.kz/a/show/221861159?search_id=0b74245a3547e8a99dc3832c252b05eaeaf1aa90&search_type=filter&advert_position=1275,2026-06-11 00:47:29.026037+03:00,Hyundai,Sonata,"    2023 - н.в. 8 поколение рестайлинг
 ",2024,"Алматы, Алматинская область",Седан,бензин,2.5,68000,Автомат,Передний привод,Слева,unknown,Да,17,12890000,221861159.webp,https://kolesa-photos.kcdn.online/webp/80/80dd73d5-0193-4a21-9232-a1e8d8f4e710/4-750x470.webp,True
 221767873,https://kolesa.kz/a/show/221767873?search_id=0b74245a3547e8a99dc3832c252b05eaeaf1aa90&search_type=filter&advert_position=1276,2026-06-11 00:47:43.434610+03:00,Hyundai,Santa Fe,"    2020 - н.в. 4 поколение рестайлинг
@@ -7784,8 +7765,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 213555594,https://kolesa.kz/a/show/213555594?search_id=094ee8d7d281df987143fb730d994e90cbb5e870&search_type=filter&advert_position=1272,2026-06-11 03:05:49.537499+03:00,Mercedes-Benz,GLS 580,"    2019 - н.в. X167
 ",2020,"Алматы, Алматинская область",Внедорожник,бензин,4.0,78000,Автомат,Полный привод,Слева,серебристый металлик,Да,36,56000000,213555594.webp,https://kolesa-photos.kcdn.online/webp/15/15ecdb6b-10a0-4c80-b968-a13e667a1166/24-750x470.webp,True
 219504168,https://kolesa.kz/a/show/219504168?search_id=094ee8d7d281df987143fb730d994e90cbb5e870&search_type=filter&advert_position=1273,2026-06-11 03:06:05.105489+03:00,Mercedes-Benz,EQE SUV,"    2022 - н.в. 1 поколение 
-",2024,"Алматы, Алматинская область",Внедорожник,"    Электрический
-",0.0,13987,Автомат,Полный привод,Слева,черный металлик,Да,25,26990000,219504168.webp,https://kolesa-photos.kcdn.online/webp/b6/b61824b2-adb2-4864-bb2a-a1b97c70fa43/3-750x470.webp,True
+",2024,"Алматы, Алматинская область",Внедорожник,"электрический",0.0,13987,Автомат,Полный привод,Слева,черный металлик,Да,25,26990000,219504168.webp,https://kolesa-photos.kcdn.online/webp/b6/b61824b2-adb2-4864-bb2a-a1b97c70fa43/3-750x470.webp,True
 222253646,https://kolesa.kz/a/show/222253646?search_id=094ee8d7d281df987143fb730d994e90cbb5e870&search_type=filter&advert_position=1275,2026-06-11 03:06:33.697090+03:00,Mercedes-Benz,E 320,"    2002 - 2006 W211/S211
 ",2002,"Алматы, Алматинская область",Седан,бензин,3.2,336584,Автомат,Задний привод,Слева,черный,Да,22,6000000,222253646.webp,https://kolesa-photos.kcdn.online/webp/7f/7f9ea0fe-6896-481c-a0f2-a1f0b3a67edd/3-750x470.webp,True
 217396607,https://kolesa.kz/a/show/217396607?search_id=094ee8d7d281df987143fb730d994e90cbb5e870&search_type=filter&advert_position=1276,2026-06-11 03:06:46.297476+03:00,Mercedes-Benz,E 500,"    2002 - 2006 W211/S211
@@ -9904,8 +9884,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 207300939,https://kolesa.kz/a/show/207300939?search_id=e2df16db6a29d952312305d3b0556572ae9217ac&search_type=filter&advert_position=9,2026-06-05 22:40:18.664148+03:00,Audi,100,"    1982 - 1988 3 поколение (C3)
 ",1988,"Алматы, Алматинская область",Седан,бензин,2.2,183000,Механика,Передний привод,Слева,unknown,Да,24,3500000,207300939.webp,https://kolesa-photos.kcdn.online/webp/6a/6a5f8c9f-f1a5-4d29-9025-a0a94c6469fe/3-750x470.webp,True
 222058937,https://kolesa.kz/a/show/222058937?search_id=e2df16db6a29d952312305d3b0556572ae9217ac&search_type=filter&advert_position=11,2026-06-05 22:40:32.101712+03:00,Audi,e-tron GT,"    2020 - н.в. 1 поколение
-",2021,"Алматы, Алматинская область",Седан,"    Электрический
-",0.0,121121,Автомат,Полный привод,Слева,unknown,Нет,20,31000000,222058937.webp,https://kolesa-photos.kcdn.online/webp/d9/d9938af6-ddbb-4a25-914a-a1ecc8ffe996/3-750x470.webp,True
+",2021,"Алматы, Алматинская область",Седан,"электрический",0.0,121121,Автомат,Полный привод,Слева,unknown,Нет,20,31000000,222058937.webp,https://kolesa-photos.kcdn.online/webp/d9/d9938af6-ddbb-4a25-914a-a1ecc8ffe996/3-750x470.webp,True
 204201803,https://kolesa.kz/a/show/204201803?search_id=e2df16db6a29d952312305d3b0556572ae9217ac&search_type=filter&advert_position=12,2026-06-05 22:40:41.320044+03:00,Audi,A4,"    2000 - 2006 B6
 ",2002,"Караганда, Карагандинская область",Седан,бензин,2.0,20000,Вариатор,Передний привод,Слева,серебристый,Да,8,3400000,204201803.webp,https://kolesa-photos.kcdn.online/webp/bc/bcbd9fdc-ded5-49df-90c7-a05ce893fa20/1-750x470.webp,True
 221903162,https://kolesa.kz/a/show/221903162?search_id=e2df16db6a29d952312305d3b0556572ae9217ac&search_type=filter&advert_position=13,2026-06-05 22:40:48.104965+03:00,Audi,A6,"    1994 - 1997 C4
@@ -10043,8 +10022,7 @@ kolesa_id,kolesa_url,parsed_at,brand,model,generation,year,city,body_type,fuel_t
 222880727,https://kolesa.kz/a/show/222880727?search_id=8074c3d1c7631f436940e0b6f18ad5402b352dee&search_type=filter&advert_position=1348,2026-06-11 00:43:28.715591+03:00,BMW,540,"    1995 - 2000 E39
 ",1999,"Тараз, Жамбылская область",Седан,бензин,4.4,286497,Автомат,Задний привод,Слева,черный,Да,10,4300000,222880727.webp,https://kolesa-photos.kcdn.online/webp/9b/9be1492b-e963-4b0a-979d-a1fdb073abdc/1-750x470.webp,True
 208975790,https://kolesa.kz/a/show/208975790?search_id=8074c3d1c7631f436940e0b6f18ad5402b352dee&search_type=filter&advert_position=1349,2026-06-11 00:43:44.123154+03:00,BMW,i4,"    2021 - н.в. 1 поколение
-",2022,"Алматы, Алматинская область",Лифтбек,"    Электрический
-",0.0,20000,Автомат,Полный привод,Слева,серый,Да,54,38700000,208975790.webp,https://kolesa-photos.kcdn.online/webp/e9/e9ca6518-3ef9-4b77-b62f-a0d3994feb1c/15-750x470.webp,True
+",2022,"Алматы, Алматинская область",Лифтбек,"электрический",0.0,20000,Автомат,Полный привод,Слева,серый,Да,54,38700000,208975790.webp,https://kolesa-photos.kcdn.online/webp/e9/e9ca6518-3ef9-4b77-b62f-a0d3994feb1c/15-750x470.webp,True
 222881480,https://kolesa.kz/a/show/222881480?search_id=8074c3d1c7631f436940e0b6f18ad5402b352dee&search_type=filter&advert_position=1352,2026-06-11 00:44:35.506333+03:00,BMW,530,"    2016 - 2020 G30
 ",2017,"Шымкент, Туркестанская область",Седан,бензин,2.0,87000,Автомат,Полный привод,Слева,unknown,Да,12,16300000,222881480.webp,https://kolesa-photos.kcdn.online/webp/02/0242c9e8-8471-4448-9fdb-a1fdb312ae48/4-750x470.webp,True
 210370473,https://kolesa.kz/a/show/210370473?search_id=8074c3d1c7631f436940e0b6f18ad5402b352dee&search_type=filter&advert_position=1354,2026-06-11 00:45:10.720826+03:00,BMW,525,"    1988 - 1996 E34

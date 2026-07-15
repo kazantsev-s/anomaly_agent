@@ -1,0 +1,156 @@
+{
+  "generated_at": "2026-07-15T13:49:58",
+  "test_id": "logic_001",
+  "table_name": "kolesa_test_logic_001",
+  "difficulty": "medium",
+  "description": "Конфликты между связанными полями: фото, флаги, тип топлива и объем двигателя.",
+  "base_csv_path": "data/kolesa.csv",
+  "csv_path": "data/anomaly_cases/kolesa_test_logic_001.csv",
+  "expected_anomalies_path": "data/anomaly_cases/expected_anomalies_logic_001.json",
+  "row_count": 5396,
+  "anomaly_count": 5,
+  "anomalies": [
+    {
+      "test_id": "logic_001",
+      "table_name": "kolesa_test_logic_001",
+      "anomaly_key": "logic_true_image_missing_url",
+      "source_row_number": 2,
+      "kolesa_id": "222486528",
+      "kolesa_url": "https://kolesa.kz/a/show/222486528?search_id=f0e67cea628ed72d4882f1b5da0dbab3f470733d&search_type=filter&advert_position=1222",
+      "anomaly_type": "found_img_true_but_url_missing",
+      "difficulty": "medium",
+      "changed_columns": [
+        "found_img",
+        "img_url",
+        "img_filename"
+      ],
+      "old_values": {
+        "found_img": "True",
+        "img_url": "https://kolesa-photos.kcdn.online/webp/c1/c19d0e73-edc8-4a50-bfcb-a1f55b29d23e/2-750x470.webp",
+        "img_filename": "222486528.webp"
+      },
+      "new_values": {
+        "found_img": "True",
+        "img_url": "",
+        "img_filename": ""
+      },
+      "row_selector": {
+        "source_kolesa_id": "222486528",
+        "current_kolesa_id": "222486528",
+        "source_row_number": 2
+      },
+      "expected_detection": "standard image consistency rule",
+      "description": "Фото считается найденным, но ссылка и имя файла пустые."
+    },
+    {
+      "test_id": "logic_001",
+      "table_name": "kolesa_test_logic_001",
+      "anomaly_key": "logic_false_image_with_url",
+      "source_row_number": 4,
+      "kolesa_id": "220471159",
+      "kolesa_url": "https://kolesa.kz/a/show/220471159?search_id=f0e67cea628ed72d4882f1b5da0dbab3f470733d&search_type=filter&advert_position=1224",
+      "anomaly_type": "found_img_false_but_url_exists",
+      "difficulty": "medium",
+      "changed_columns": [
+        "found_img"
+      ],
+      "old_values": {
+        "found_img": "True"
+      },
+      "new_values": {
+        "found_img": "False"
+      },
+      "row_selector": {
+        "source_kolesa_id": "220471159",
+        "current_kolesa_id": "220471159",
+        "source_row_number": 4
+      },
+      "expected_detection": "standard image consistency rule",
+      "description": "Фото помечено как не найденное, но ссылка на изображение остается заполненной."
+    },
+    {
+      "test_id": "logic_001",
+      "table_name": "kolesa_test_logic_001",
+      "anomaly_key": "logic_zero_images_with_image",
+      "source_row_number": 3,
+      "kolesa_id": "218695550",
+      "kolesa_url": "https://kolesa.kz/a/show/218695550?search_id=f0e67cea628ed72d4882f1b5da0dbab3f470733d&search_type=filter&advert_position=1223",
+      "anomaly_type": "zero_images_but_image_found",
+      "difficulty": "medium",
+      "changed_columns": [
+        "imgs_count",
+        "found_img"
+      ],
+      "old_values": {
+        "imgs_count": "27",
+        "found_img": "True"
+      },
+      "new_values": {
+        "imgs_count": "0",
+        "found_img": "True"
+      },
+      "row_selector": {
+        "source_kolesa_id": "218695550",
+        "current_kolesa_id": "218695550",
+        "source_row_number": 3
+      },
+      "expected_detection": "standard image count consistency rule",
+      "description": "Количество фото равно нулю, но флаг найденного изображения включен."
+    },
+    {
+      "test_id": "logic_001",
+      "table_name": "kolesa_test_logic_001",
+      "anomaly_key": "logic_gas_car_zero_engine",
+      "source_row_number": 1,
+      "kolesa_id": "220599328",
+      "kolesa_url": "https://kolesa.kz/a/show/220599328?search_id=f0e67cea628ed72d4882f1b5da0dbab3f470733d&search_type=filter&advert_position=1221",
+      "anomaly_type": "fuel_engine_mismatch",
+      "difficulty": "medium",
+      "changed_columns": [
+        "fuel_type",
+        "engine_volume"
+      ],
+      "old_values": {
+        "fuel_type": "бензин",
+        "engine_volume": "1.5"
+      },
+      "new_values": {
+        "fuel_type": "бензин",
+        "engine_volume": "0.0"
+      },
+      "row_selector": {
+        "source_kolesa_id": "220599328",
+        "current_kolesa_id": "220599328",
+        "source_row_number": 1
+      },
+      "expected_detection": "context fuel/engine rule",
+      "description": "Бензиновый Chevrolet Cobalt получает нулевой объем двигателя."
+    },
+    {
+      "test_id": "logic_001",
+      "table_name": "kolesa_test_logic_001",
+      "anomaly_key": "logic_electric_nonzero_engine",
+      "source_row_number": 261,
+      "kolesa_id": "178642575",
+      "kolesa_url": "https://kolesa.kz/a/show/178642575?search_id=3ab78c9c39fba83756b9b472b6975c5f90001947&search_type=filter&advert_position=693",
+      "anomaly_type": "fuel_engine_mismatch",
+      "difficulty": "medium",
+      "changed_columns": [
+        "engine_volume"
+      ],
+      "old_values": {
+        "engine_volume": "0.0"
+      },
+      "new_values": {
+        "engine_volume": "2.0"
+      },
+      "row_selector": {
+        "source_kolesa_id": "178642575",
+        "current_kolesa_id": "178642575",
+        "source_row_number": 261
+      },
+      "expected_detection": "context fuel/engine rule",
+      "description": "Электрический Audi e-tron получает ненулевой объем двигателя."
+    }
+  ]
+}

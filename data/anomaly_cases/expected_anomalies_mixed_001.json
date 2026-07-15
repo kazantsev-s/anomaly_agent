@@ -1,0 +1,257 @@
+{
+  "generated_at": "2026-07-15T13:49:58",
+  "test_id": "mixed_001",
+  "table_name": "kolesa_test_mixed_001",
+  "difficulty": "mixed",
+  "description": "Смешанный набор: простые, логические и контекстные аномалии в одном CSV.",
+  "base_csv_path": "data/kolesa.csv",
+  "csv_path": "data/anomaly_cases/kolesa_test_mixed_001.csv",
+  "expected_anomalies_path": "data/anomaly_cases/expected_anomalies_mixed_001.json",
+  "row_count": 5396,
+  "anomaly_count": 9,
+  "anomalies": [
+    {
+      "test_id": "mixed_001",
+      "table_name": "kolesa_test_mixed_001",
+      "anomaly_key": "mixed_future_year",
+      "source_row_number": 2,
+      "kolesa_id": "222486528",
+      "kolesa_url": "https://kolesa.kz/a/show/222486528?search_id=f0e67cea628ed72d4882f1b5da0dbab3f470733d&search_type=filter&advert_position=1222",
+      "anomaly_type": "invalid_car_year",
+      "difficulty": "easy",
+      "changed_columns": [
+        "year"
+      ],
+      "old_values": {
+        "year": "2023"
+      },
+      "new_values": {
+        "year": "2035"
+      },
+      "row_selector": {
+        "source_kolesa_id": "222486528",
+        "current_kolesa_id": "222486528",
+        "source_row_number": 2
+      },
+      "expected_detection": "standard numeric/year rule",
+      "description": "Chevrolet Monza получает невозможный будущий год выпуска."
+    },
+    {
+      "test_id": "mixed_001",
+      "table_name": "kolesa_test_mixed_001",
+      "anomaly_key": "mixed_negative_mileage",
+      "source_row_number": 3,
+      "kolesa_id": "218695550",
+      "kolesa_url": "https://kolesa.kz/a/show/218695550?search_id=f0e67cea628ed72d4882f1b5da0dbab3f470733d&search_type=filter&advert_position=1223",
+      "anomaly_type": "negative_numeric_value",
+      "difficulty": "easy",
+      "changed_columns": [
+        "mileage"
+      ],
+      "old_values": {
+        "mileage": "85024"
+      },
+      "new_values": {
+        "mileage": "-100"
+      },
+      "row_selector": {
+        "source_kolesa_id": "218695550",
+        "current_kolesa_id": "218695550",
+        "source_row_number": 3
+      },
+      "expected_detection": "standard non-negative numeric rule",
+      "description": "Chevrolet Captiva получает отрицательный пробег."
+    },
+    {
+      "test_id": "mixed_001",
+      "table_name": "kolesa_test_mixed_001",
+      "anomaly_key": "mixed_unexpected_fuel",
+      "source_row_number": 4,
+      "kolesa_id": "220471159",
+      "kolesa_url": "https://kolesa.kz/a/show/220471159?search_id=f0e67cea628ed72d4882f1b5da0dbab3f470733d&search_type=filter&advert_position=1224",
+      "anomaly_type": "unexpected_category",
+      "difficulty": "easy",
+      "changed_columns": [
+        "fuel_type"
+      ],
+      "old_values": {
+        "fuel_type": "бензин"
+      },
+      "new_values": {
+        "fuel_type": "пар"
+      },
+      "row_selector": {
+        "source_kolesa_id": "220471159",
+        "current_kolesa_id": "220471159",
+        "source_row_number": 4
+      },
+      "expected_detection": "standard allowed category rule",
+      "description": "Chevrolet Cruze получает несуществующий тип топлива."
+    },
+    {
+      "test_id": "mixed_001",
+      "table_name": "kolesa_test_mixed_001",
+      "anomaly_key": "mixed_true_image_missing_url",
+      "source_row_number": 75,
+      "kolesa_id": "222889946",
+      "kolesa_url": "https://kolesa.kz/a/show/222889946?search_id=05a8d1894c9c069c1f0e39e75c8cab3cb66fea1b&search_type=filter&advert_position=1313",
+      "anomaly_type": "found_img_true_but_url_missing",
+      "difficulty": "medium",
+      "changed_columns": [
+        "found_img",
+        "img_url",
+        "img_filename"
+      ],
+      "old_values": {
+        "found_img": "True",
+        "img_url": "https://kolesa-photos.kcdn.online/webp/85/85787a1a-c50c-4754-acdc-a1fdd1e6bd1d/1-750x470.webp",
+        "img_filename": "222889946.webp"
+      },
+      "new_values": {
+        "found_img": "True",
+        "img_url": "",
+        "img_filename": ""
+      },
+      "row_selector": {
+        "source_kolesa_id": "222889946",
+        "current_kolesa_id": "222889946",
+        "source_row_number": 75
+      },
+      "expected_detection": "standard image consistency rule",
+      "description": "Фото считается найденным, но ссылка и имя файла пустые."
+    },
+    {
+      "test_id": "mixed_001",
+      "table_name": "kolesa_test_mixed_001",
+      "anomaly_key": "mixed_false_image_with_url",
+      "source_row_number": 86,
+      "kolesa_id": "222886208",
+      "kolesa_url": "https://kolesa.kz/a/show/222886208?search_id=b51bf8e7e94dc9fb0ceb64106fe0df7dfb295426&search_type=filter&advert_position=1331",
+      "anomaly_type": "found_img_false_but_url_exists",
+      "difficulty": "medium",
+      "changed_columns": [
+        "found_img"
+      ],
+      "old_values": {
+        "found_img": "True"
+      },
+      "new_values": {
+        "found_img": "False"
+      },
+      "row_selector": {
+        "source_kolesa_id": "222886208",
+        "current_kolesa_id": "222886208",
+        "source_row_number": 86
+      },
+      "expected_detection": "standard image consistency rule",
+      "description": "Фото помечено как не найденное, но ссылка на изображение остается заполненной."
+    },
+    {
+      "test_id": "mixed_001",
+      "table_name": "kolesa_test_mixed_001",
+      "anomaly_key": "mixed_lexus_lx_small_engine",
+      "source_row_number": 697,
+      "kolesa_id": "222206651",
+      "kolesa_url": "https://kolesa.kz/a/show/222206651?search_id=74ef0a22de5fc8683fc865f5d883a6a0fc534722&search_type=filter&advert_position=203",
+      "anomaly_type": "model_engine_mismatch",
+      "difficulty": "hard",
+      "changed_columns": [
+        "engine_volume"
+      ],
+      "old_values": {
+        "engine_volume": "5.7"
+      },
+      "new_values": {
+        "engine_volume": "1.5"
+      },
+      "row_selector": {
+        "source_kolesa_id": "222206651",
+        "current_kolesa_id": "222206651",
+        "source_row_number": 697
+      },
+      "expected_detection": "model context engine-volume rule",
+      "description": "Lexus LX 570 получает объем двигателя 1.5 л."
+    },
+    {
+      "test_id": "mixed_001",
+      "table_name": "kolesa_test_mixed_001",
+      "anomaly_key": "mixed_sonata_2026_high_mileage",
+      "source_row_number": 5384,
+      "kolesa_id": "222755699",
+      "kolesa_url": "https://kolesa.kz/a/show/222755699?search_id=68d28cf001922cd0090ea3641149ac8849cdf952&search_type=filter&advert_position=1403",
+      "anomaly_type": "year_mileage_mismatch",
+      "difficulty": "hard",
+      "changed_columns": [
+        "mileage"
+      ],
+      "old_values": {
+        "mileage": "2500"
+      },
+      "new_values": {
+        "mileage": "300000"
+      },
+      "row_selector": {
+        "source_kolesa_id": "222755699",
+        "current_kolesa_id": "222755699",
+        "source_row_number": 5384
+      },
+      "expected_detection": "year/mileage context rule",
+      "description": "Hyundai Sonata 2026 получает пробег 300000 км."
+    },
+    {
+      "test_id": "mixed_001",
+      "table_name": "kolesa_test_mixed_001",
+      "anomaly_key": "mixed_i3_gas_engine",
+      "source_row_number": 609,
+      "kolesa_id": "207037969",
+      "kolesa_url": "https://kolesa.kz/a/show/207037969?search_id=a09d116e0c2d69bf717d642f5da97c65c008dd6a&search_type=filter&advert_position=143",
+      "anomaly_type": "fuel_engine_mismatch",
+      "difficulty": "hard",
+      "changed_columns": [
+        "fuel_type",
+        "engine_volume"
+      ],
+      "old_values": {
+        "fuel_type": "электрический",
+        "engine_volume": "0.0"
+      },
+      "new_values": {
+        "fuel_type": "бензин",
+        "engine_volume": "2.0"
+      },
+      "row_selector": {
+        "source_kolesa_id": "207037969",
+        "current_kolesa_id": "207037969",
+        "source_row_number": 609
+      },
+      "expected_detection": "electric model fuel/engine context rule",
+      "description": "BMW i3 становится бензиновым автомобилем с объемом двигателя 2.0 л."
+    },
+    {
+      "test_id": "mixed_001",
+      "table_name": "kolesa_test_mixed_001",
+      "anomaly_key": "mixed_camry_market_price",
+      "source_row_number": 320,
+      "kolesa_id": "222243157",
+      "kolesa_url": "https://kolesa.kz/a/show/222243157?search_id=4cc0f8c29f4503ac50e32daacb3a369aa51740b2&search_type=filter&advert_position=202",
+      "anomaly_type": "model_year_price_outlier",
+      "difficulty": "hard",
+      "changed_columns": [
+        "price"
+      ],
+      "old_values": {
+        "price": "5500000"
+      },
+      "new_values": {
+        "price": "45000000"
+      },
+      "row_selector": {
+        "source_kolesa_id": "222243157",
+        "current_kolesa_id": "222243157",
+        "source_row_number": 320
+      },
+      "expected_detection": "brand/model/year price cohort rule",
+      "description": "Toyota Camry 2011 получает цену 45 млн тенге."
+    }
+  ]
+}

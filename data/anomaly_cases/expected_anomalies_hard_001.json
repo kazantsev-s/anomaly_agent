@@ -1,0 +1,173 @@
+{
+  "generated_at": "2026-07-15T13:49:58",
+  "test_id": "hard_001",
+  "table_name": "kolesa_test_hard_001",
+  "difficulty": "hard",
+  "description": "Контекстные аномалии: значения выглядят нормальными сами по себе, но конфликтуют с моделью, годом, рынком или типом авто.",
+  "base_csv_path": "data/kolesa.csv",
+  "csv_path": "data/anomaly_cases/kolesa_test_hard_001.csv",
+  "expected_anomalies_path": "data/anomaly_cases/expected_anomalies_hard_001.json",
+  "row_count": 5396,
+  "anomaly_count": 6,
+  "anomalies": [
+    {
+      "test_id": "hard_001",
+      "table_name": "kolesa_test_hard_001",
+      "anomaly_key": "hard_lexus_lx_small_engine",
+      "source_row_number": 697,
+      "kolesa_id": "222206651",
+      "kolesa_url": "https://kolesa.kz/a/show/222206651?search_id=74ef0a22de5fc8683fc865f5d883a6a0fc534722&search_type=filter&advert_position=203",
+      "anomaly_type": "model_engine_mismatch",
+      "difficulty": "hard",
+      "changed_columns": [
+        "engine_volume"
+      ],
+      "old_values": {
+        "engine_volume": "5.7"
+      },
+      "new_values": {
+        "engine_volume": "1.5"
+      },
+      "row_selector": {
+        "source_kolesa_id": "222206651",
+        "current_kolesa_id": "222206651",
+        "source_row_number": 697
+      },
+      "expected_detection": "model context engine-volume rule",
+      "description": "Lexus LX 570 получает объем двигателя 1.5 л, который нормален вообще, но не для этой модели."
+    },
+    {
+      "test_id": "hard_001",
+      "table_name": "kolesa_test_hard_001",
+      "anomaly_key": "hard_lx_hatchback_body",
+      "source_row_number": 765,
+      "kolesa_id": "222223679",
+      "kolesa_url": "https://kolesa.kz/a/show/222223679?search_id=f5291151471f3784594c54b5cf4f4dffeaf0a569&search_type=filter&advert_position=296",
+      "anomaly_type": "model_body_mismatch",
+      "difficulty": "hard",
+      "changed_columns": [
+        "body_type"
+      ],
+      "old_values": {
+        "body_type": "Внедорожник"
+      },
+      "new_values": {
+        "body_type": "Хэтчбек"
+      },
+      "row_selector": {
+        "source_kolesa_id": "222223679",
+        "current_kolesa_id": "222223679",
+        "source_row_number": 765
+      },
+      "expected_detection": "model context body-type rule",
+      "description": "Lexus LX 470 получает кузов хэтчбек вместо внедорожника."
+    },
+    {
+      "test_id": "hard_001",
+      "table_name": "kolesa_test_hard_001",
+      "anomaly_key": "hard_sonata_2026_high_mileage",
+      "source_row_number": 5384,
+      "kolesa_id": "222755699",
+      "kolesa_url": "https://kolesa.kz/a/show/222755699?search_id=68d28cf001922cd0090ea3641149ac8849cdf952&search_type=filter&advert_position=1403",
+      "anomaly_type": "year_mileage_mismatch",
+      "difficulty": "hard",
+      "changed_columns": [
+        "mileage"
+      ],
+      "old_values": {
+        "mileage": "2500"
+      },
+      "new_values": {
+        "mileage": "300000"
+      },
+      "row_selector": {
+        "source_kolesa_id": "222755699",
+        "current_kolesa_id": "222755699",
+        "source_row_number": 5384
+      },
+      "expected_detection": "year/mileage context rule",
+      "description": "Hyundai Sonata 2026 получает пробег 300000 км."
+    },
+    {
+      "test_id": "hard_001",
+      "table_name": "kolesa_test_hard_001",
+      "anomaly_key": "hard_i3_gas_engine",
+      "source_row_number": 609,
+      "kolesa_id": "207037969",
+      "kolesa_url": "https://kolesa.kz/a/show/207037969?search_id=a09d116e0c2d69bf717d642f5da97c65c008dd6a&search_type=filter&advert_position=143",
+      "anomaly_type": "fuel_engine_mismatch",
+      "difficulty": "hard",
+      "changed_columns": [
+        "fuel_type",
+        "engine_volume"
+      ],
+      "old_values": {
+        "fuel_type": "электрический",
+        "engine_volume": "0.0"
+      },
+      "new_values": {
+        "fuel_type": "бензин",
+        "engine_volume": "2.0"
+      },
+      "row_selector": {
+        "source_kolesa_id": "207037969",
+        "current_kolesa_id": "207037969",
+        "source_row_number": 609
+      },
+      "expected_detection": "electric model fuel/engine context rule",
+      "description": "BMW i3 становится бензиновым автомобилем с объемом двигателя 2.0 л."
+    },
+    {
+      "test_id": "hard_001",
+      "table_name": "kolesa_test_hard_001",
+      "anomaly_key": "hard_camry_market_price",
+      "source_row_number": 320,
+      "kolesa_id": "222243157",
+      "kolesa_url": "https://kolesa.kz/a/show/222243157?search_id=4cc0f8c29f4503ac50e32daacb3a369aa51740b2&search_type=filter&advert_position=202",
+      "anomaly_type": "model_year_price_outlier",
+      "difficulty": "hard",
+      "changed_columns": [
+        "price"
+      ],
+      "old_values": {
+        "price": "5500000"
+      },
+      "new_values": {
+        "price": "45000000"
+      },
+      "row_selector": {
+        "source_kolesa_id": "222243157",
+        "current_kolesa_id": "222243157",
+        "source_row_number": 320
+      },
+      "expected_detection": "brand/model/year price cohort rule",
+      "description": "Toyota Camry 2011 получает цену 45 млн тенге: глобально цена возможна, но для этой когорты странная."
+    },
+    {
+      "test_id": "hard_001",
+      "table_name": "kolesa_test_hard_001",
+      "anomaly_key": "hard_land_cruiser_front_drive",
+      "source_row_number": 349,
+      "kolesa_id": "221574605",
+      "kolesa_url": "https://kolesa.kz/a/show/221574605?search_id=ce5b00d115094e875ed4c4a1ff7ebaf4cf4078cd&search_type=filter&advert_position=240",
+      "anomaly_type": "model_drive_mismatch",
+      "difficulty": "hard",
+      "changed_columns": [
+        "drive_type"
+      ],
+      "old_values": {
+        "drive_type": "Полный привод"
+      },
+      "new_values": {
+        "drive_type": "Передний привод"
+      },
+      "row_selector": {
+        "source_kolesa_id": "221574605",
+        "current_kolesa_id": "221574605",
+        "source_row_number": 349
+      },
+      "expected_detection": "model context drive-type rule",
+      "description": "Toyota Land Cruiser получает передний привод."
+    }
+  ]
+}

@@ -9,7 +9,7 @@ NON_NEGATIVE_COLUMNS = ['price', 'mileage', 'year', 'engine_volume', 'imgs_count
 RARE_CATEGORY_COLUMNS = ['body_type', 'fuel_type', 'transmission', 'drive_type', 'steering_wheel', 'kz_registration']
 
 ALLOWED_CATEGORY_VALUES = {
-    'fuel_type': ['бензин', 'дизель', 'газ-бензин', 'гибрид', 'газ', 'Электрический', 'электрический'],
+    'fuel_type': ['бензин', 'дизель', 'газ-бензин', 'гибрид', 'газ', 'электрический'],
     'transmission': ['Автомат', 'Механика', 'Вариатор', 'Робот'],
     'drive_type': ['Передний привод', 'Полный привод', 'Задний привод'],
     'steering_wheel': ['Слева', 'Справа'],
@@ -75,13 +75,13 @@ def make_finding(anomaly_type: str, table_name: str, column_name: str, importanc
     }
 
 
-async def get_sample_rows(table_name: str, schema: dict, condition: str, extra_columns=None, limit: int = 10):
+async def get_sample_rows(table_name: str, schema: dict, condition: str, extra_columns=None, limit: int = 10, params=None):
     # Возвращаем несколько строк-примеров, чтобы отчет мог показать конкретные объявления
     selected_columns = get_select_columns(schema, extra_columns)
 
     select_sql = ', '.join(selected_columns)
 
-    return await fetch_all(f'SELECT {select_sql} FROM {table_name} WHERE {condition} ORDER BY id LIMIT {limit}')
+    return await fetch_all(f'SELECT {select_sql} FROM {table_name} WHERE {condition} ORDER BY id LIMIT {limit}', params)
 
 
 # Инструменты для чтения схемы и профиля таблицы
@@ -369,7 +369,8 @@ async def check_numeric_outliers(schema: dict):
 
 # Проверки категорий, например, на наличие нетиповых, редкий категорий
 
-async def check_categorical_anomalies(table_name: str):
+async def check_categorical_anomalies(schema: dict):
+    table_name = schema['table_name']
     findings = []
     row_count = await fetch_value(f'SELECT COUNT(*) FROM {table_name}')
     # Минимальный порог защищает маленькие таблицы от слишком агрессивной редкости.
@@ -392,6 +393,18 @@ async def check_categorical_anomalies(table_name: str):
         )
 
         if unexpected_values:
+            # Для сохранения finding нужны конкретные строки, а не только список значений
+            sample_rows = await get_sample_rows(
+                table_name,
+                schema,
+                f'''
+                {column_name} IS NOT NULL
+                    AND {clean_column_sql} <> ''
+                    AND {clean_column_sql} <> ALL($1::text[])
+                ''',
+                [column_name],
+                params=[allowed_values]
+            )
             findings.append(make_finding(
                 'unexpected_category',
                 table_name,
@@ -399,7 +412,7 @@ async def check_categorical_anomalies(table_name: str):
                 'high',
                 sum(row['count'] for row in unexpected_values),
                 f'В колонке {column_name} есть значения вне ожидаемого списка категорий',
-                [],
+                sample_rows,
                 {'values': unexpected_values},
             ))
 
@@ -419,6 +432,24 @@ async def check_categorical_anomalies(table_name: str):
         )
 
         if rare_values:
+            # Берем примеры строк с редкими значениями, чтобы потом был row_id/kolesa_id
+            sample_rows = await get_sample_rows(
+                table_name,
+                schema,
+                f'''
+                {column_name} IS NOT NULL
+                    AND {clean_column_sql} <> ''
+                    AND {clean_column_sql} IN (
+                        SELECT {clean_column_sql}::text
+                        FROM {table_name}
+                        WHERE {column_name} IS NOT NULL AND {clean_column_sql} <> ''
+                        GROUP BY {clean_column_sql}
+                        HAVING COUNT(*) <= $1
+                    )
+                ''',
+                [column_name],
+                params=[rare_threshold],
+            )
             findings.append(make_finding(
                 'rare_category',
                 table_name,
@@ -426,7 +457,7 @@ async def check_categorical_anomalies(table_name: str):
                 'low',
                 sum(row['count'] for row in rare_values),
                 f'В колонке {column_name} есть редкие категории',
-                [],
+                sample_rows,
                 {
                     'rare_threshold': rare_threshold,
                     'values': rare_values,
@@ -455,6 +486,21 @@ async def check_duplicates(table_name: str):
         )
 
         if duplicates:
+            # Для дублей сохраняем сами объявления, а агрегат остается в details
+            sample_rows = await get_sample_rows(
+                table_name,
+                {'table_name': table_name},
+                f'''
+                {column_name} IN (
+                    SELECT {column_name}
+                    FROM {table_name}
+                    WHERE {column_name} IS NOT NULL
+                    GROUP BY {column_name}
+                    HAVING COUNT(*) > 1
+                )
+                ''',
+                [column_name],
+            )
             findings.append(make_finding(
                 'duplicate_value',
                 table_name,
@@ -462,7 +508,7 @@ async def check_duplicates(table_name: str):
                 'high',
                 sum(row['count'] for row in duplicates),
                 f'В колонке {column_name} есть повторяющиеся значения',
-                [],
+                sample_rows,
                 {'duplicates': duplicates},
             ))
 
@@ -516,6 +562,22 @@ async def check_logic_rules(schema: dict):
             'importance': 'medium',
             'reason': 'Очень свежий автомобиль имеет подозрительно большой пробег',
         },
+        {
+            'name': 'electric_car_positive_engine_volume',
+            'columns': ['fuel_type', 'engine_volume'],
+            'column': 'engine_volume',
+            'condition': f"lower({clean_text_sql('fuel_type')}) = 'электрический' AND engine_volume > 0",
+            'importance': 'high',
+            'reason': 'У электрического автомобиля указан ненулевой объем двигателя',
+        },
+        {
+            'name': 'non_electric_car_zero_engine_volume',
+            'columns': ['fuel_type', 'engine_volume'],
+            'column': 'engine_volume',
+            'condition': f"lower({clean_text_sql('fuel_type')}) <> 'электрический' AND engine_volume = 0",
+            'importance': 'high',
+            'reason': 'У неэлектрического автомобиля указан нулевой объем двигателя',
+        },
     ]
 
     for rule in logic_rules:
@@ -541,8 +603,8 @@ async def check_logic_rules(schema: dict):
     return findings
 
 
-async def run_custom_sql(sql_query: str):
-    return await execute_sql_query(sql_query)
+async def run_custom_sql(sql_query: str, table_name: str):
+    return await execute_sql_query(sql_query, table_name)
 
 
 async def run_standard_checks(schema: dict, profile: dict):
@@ -552,7 +614,7 @@ async def run_standard_checks(schema: dict, profile: dict):
     findings = []
     findings.extend(await check_missing_values(schema, profile))
     findings.extend(await check_numeric_outliers(schema))
-    findings.extend(await check_categorical_anomalies(table_name))
+    findings.extend(await check_categorical_anomalies(schema))
     findings.extend(await check_duplicates(table_name))
     findings.extend(await check_logic_rules(schema))
 

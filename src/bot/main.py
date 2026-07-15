@@ -1,5 +1,8 @@
 import asyncio
+from html import unescape
+import re
 from aiogram import Bot, Dispatcher
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import Command
 from config import get_settings
 from db.postgres import init_db, ping_db
@@ -10,6 +13,27 @@ from aiogram.enums import ParseMode
 
 dp = Dispatcher()
 logger = init_logger()
+
+
+def prepare_telegram_html(text: str) -> str:
+    # Telegram HTML не поддерживает br, модель иногда все равно его добавляет
+    return re.sub(r'<br\s*/?>', '\n', text, flags=re.IGNORECASE)
+
+
+def strip_html_tags(text: str) -> str:
+    # Fallback для неожиданных HTML-тегов, чтобы отчет не терялся целиком
+    text = prepare_telegram_html(text)
+    text = re.sub(r'</(p|div|li)>', '\n', text, flags=re.IGNORECASE)
+    text = re.sub(r'<[^>]+>', '', text)
+    return unescape(text)
+
+
+async def answer_html(message, text: str):
+    try:
+        await message.answer(prepare_telegram_html(text), parse_mode=ParseMode.HTML)
+    except TelegramBadRequest:
+        logger.exception('Telegram не смог разобрать HTML, отправляем текст без тегов')
+        await message.answer(strip_html_tags(text))
 
 
 @dp.message(Command('start'))
@@ -52,24 +76,41 @@ async def ask_agent(message):
         return
 
     logger.info(f'Агент вернул ответ')
-    await message.answer(agent_result['answer'], parse_mode=ParseMode.HTML)
+    await answer_html(message, agent_result['answer'])
 
 
 @dp.message(Command('analyze'))
 async def analyze_table(message):
     settings = get_settings()
+    # Если пользователь не указал имя таблицы, используем таблицу по умолчанию
+    table_name = message.text.replace('/analyze', '').strip() or settings.analyze_default_table
 
     try:
-        logger.info('Вызов анализа аномалий')
-        agent_result = await analyze_graph.ainvoke({
-            'table_name': settings.analyze_default_table,
-        })
+        logger.info(f'Вызов анализа аномалий для таблицы {table_name}')
+        answer_sent = False
+
+        async for graph_update in analyze_graph.astream({'table_name': table_name}, stream_mode='updates'):
+            if 'final_anomaly_answer' in graph_update:
+                agent_result = graph_update['final_anomaly_answer']
+                await answer_html(message, agent_result['answer'])
+                answer_sent = True
+
+                if agent_result.get('test_id'):
+                    await message.answer('Рассчитываю качество работы агента...')
+
+            if 'evaluate_analysis' in graph_update:
+                agent_result = graph_update['evaluate_analysis']
+                evaluation_answer = agent_result.get('evaluation_answer')
+                if evaluation_answer:
+                    await answer_html(message, evaluation_answer)
+
+        if not answer_sent:
+            logger.error('Граф анализа завершился без финального ответа')
+            await message.answer('Не удалось получить итоговый отчет')
     except Exception:
         logger.exception('Ошибка анализа аномалий')
         await message.answer('Не удалось выполнить анализ аномалий')
         return
-
-    await message.answer(agent_result['answer'], parse_mode=ParseMode.HTML)
 
 
 async def main():

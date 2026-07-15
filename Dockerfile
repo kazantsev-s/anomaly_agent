@@ -7,8 +7,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY table.sql .
-COPY data/kolesa.csv ./data/kolesa.csv
+COPY db.sql .
+COPY data ./data
 COPY src ./src
 
 CMD ["python", "-m", "bot.main"]
