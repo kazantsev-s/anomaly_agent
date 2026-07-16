@@ -155,11 +155,11 @@ def parse_llm_json(raw_text: str) -> dict:
 
 
 def build_custom_sql_findings(state: AnalyzeAgentState) -> list[dict]:
-    # Успешные custom SQL-результаты тоже сохраняем как findings для оценки качества
+    # Результаты поиска кандидатов в аномалии сохраняем как findings для оценки качества
     findings = []
 
     for result in state['custom_sql_results']:
-        if result['error'] or not result['rows']:
+        if result['result_kind'] != 'anomaly_candidates' or result['error'] or not result['rows']:
             continue
 
         findings.append({
@@ -172,6 +172,7 @@ def build_custom_sql_findings(state: AnalyzeAgentState) -> list[dict]:
             'sample_rows': result['rows'],
             'details': {
                 'name': result['name'],
+                'result_kind': result['result_kind'],
                 'query': result['query'],
             },
         })
@@ -371,7 +372,7 @@ def format_evaluation_answer(evaluation_data: dict) -> str:
         f"Найдено ожидаемых: <code>{evaluation_data['expected_found']}</code>\n"
         f"Recall поиска: <code>{recall_percent}%</code>\n"
         f"Всего findings агента: <code>{evaluation_data['agent_findings_count']}</code>\n"
-        f"Не сопоставлено с тестовыми аномалиями: <code>{evaluation_data['extra_findings_count']}</code>\n"
+        f"Findings вне тестовой разметки, не участвующие в recall: <code>{evaluation_data['extra_findings_count']}</code>\n"
         f"Пропущено: <code>{evaluation_data['missed_count']}</code>\n\n"
         f"{escape(evaluation_data['summary'])}\n\n"
         '<b>Качество итогового отчета</b>\n\n'
@@ -613,9 +614,12 @@ async def plan_custom_checks(state: AnalyzeAgentState) -> AnalyzeAgentState:
                 if not isinstance(sql_query, dict):
                     raise ValueError('Агент вернул custom SQL не в формате объекта')
 
-                for field_name in ['name', 'purpose', 'query']:
+                for field_name in ['name', 'purpose', 'result_kind', 'query']:
                     if field_name not in sql_query:
                         raise ValueError(f'В custom SQL-плане нет поля {field_name}')
+
+                if sql_query['result_kind'] not in ['anomaly_candidates', 'context']:
+                    raise ValueError('Агент вернул неизвестный тип результата custom SQL')
 
         logger.info(f'Агент предложил custom SQL-запросов: {len(sql_queries)}')
 
@@ -650,6 +654,7 @@ async def run_custom_checks(state: AnalyzeAgentState) -> AnalyzeAgentState:
 
         for sql_query in sql_queries:
             name = sql_query['name']
+            result_kind = sql_query['result_kind']
             query = sql_query['query']
 
             logger.info(f'Выполнение custom SQL-запроса {name}: {query}')
@@ -660,6 +665,7 @@ async def run_custom_checks(state: AnalyzeAgentState) -> AnalyzeAgentState:
                 custom_sql_results.append({
                     'name': name,
                     'purpose': sql_query['purpose'],
+                    'result_kind': result_kind,
                     'query': query,
                     'rows': [],
                     'error': 'Запрос уже выполнялся',
@@ -673,6 +679,7 @@ async def run_custom_checks(state: AnalyzeAgentState) -> AnalyzeAgentState:
                 custom_sql_results.append({
                     'name': name,
                     'purpose': sql_query['purpose'],
+                    'result_kind': result_kind,
                     'query': query,
                     'rows': rows,
                     'error': None,
@@ -685,6 +692,7 @@ async def run_custom_checks(state: AnalyzeAgentState) -> AnalyzeAgentState:
                 custom_sql_results.append({
                     'name': name,
                     'purpose': sql_query['purpose'],
+                    'result_kind': result_kind,
                     'query': query,
                     'rows': [],
                     'error': str(e),
