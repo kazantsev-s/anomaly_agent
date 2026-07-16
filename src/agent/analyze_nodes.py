@@ -34,7 +34,7 @@ FINDING_TYPE_LABELS = {
     'missing_empty_text': 'пустые строки',
     'missing_unknown_text': 'unknown как пропуск',
     'negative_numeric_value': 'отрицательные числа',
-    'non_positive_numeric_value': 'нулевые или отрицательные значения',
+    'non_positive_numeric_value': 'нулевые значения',
     'invalid_car_year': 'невозможный год выпуска',
     'iqr_numeric_outlier': 'IQR-выбросы',
     'unexpected_category': 'неожиданные категории',

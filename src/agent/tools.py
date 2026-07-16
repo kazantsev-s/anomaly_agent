@@ -289,18 +289,18 @@ async def check_numeric_outliers(schema: dict):
                     sample_rows,
                 ))
 
-        if column_name in ['price', 'engine_volume']:
-            count = await fetch_value(f'SELECT COUNT(*) FROM {table_name} WHERE {column_name} <= 0')
+        if column_name == 'price':
+            count = await fetch_value(f'SELECT COUNT(*) FROM {table_name} WHERE {column_name} = 0')
 
             if count > 0:
-                sample_rows = await get_sample_rows(table_name, schema, f'{column_name} <= 0', [column_name])
+                sample_rows = await get_sample_rows(table_name, schema, f'{column_name} = 0', [column_name])
                 findings.append(make_finding(
                     'non_positive_numeric_value',
                     table_name,
                     column_name,
                     'high',
                     count,
-                    f'Колонка {column_name} содержит нулевые или отрицательные значения',
+                    f'Колонка {column_name} содержит нулевые значения',
                     sample_rows,
                 ))
 
