@@ -47,7 +47,7 @@ def clean_text_sql(column_name: str):
     return f"btrim({column_name}, E' \\n\\r\\t')"
 
 
-def get_select_columns(schema: dict, extra_columns=None):
+def get_select_columns(extra_columns=None):
     # В примеры строк добавляем базовый контекст объявления и конкретную колонку проверки.
     extra_columns = extra_columns or []
     selected_columns = []
@@ -75,9 +75,9 @@ def make_finding(anomaly_type: str, table_name: str, column_name: str, importanc
     }
 
 
-async def get_sample_rows(table_name: str, schema: dict, condition: str, extra_columns=None, limit: int = 10, params=None):
+async def get_sample_rows(table_name: str, condition: str, extra_columns=None, limit: int = 10, params=None):
     # Возвращаем несколько строк-примеров, чтобы отчет мог показать конкретные объявления
-    selected_columns = get_select_columns(schema, extra_columns)
+    selected_columns = get_select_columns(extra_columns)
 
     select_sql = ', '.join(selected_columns)
 
@@ -214,7 +214,6 @@ async def check_missing_values(schema: dict, profile: dict):
         if column_info['null_count'] > 0:
             sample_rows = await get_sample_rows(
                 table_name,
-                schema,
                 f'{column_name} IS NULL',
                 [column_name],
             )
@@ -232,7 +231,6 @@ async def check_missing_values(schema: dict, profile: dict):
             clean_column_sql = clean_text_sql(column_name)
             sample_rows = await get_sample_rows(
                 table_name,
-                schema,
                 f"{column_name} IS NOT NULL AND {clean_column_sql} = ''",
                 [column_name],
             )
@@ -250,7 +248,6 @@ async def check_missing_values(schema: dict, profile: dict):
             clean_column_sql = clean_text_sql(column_name)
             sample_rows = await get_sample_rows(
                 table_name,
-                schema,
                 f"lower({clean_column_sql}) = 'unknown'",
                 [column_name],
             )
@@ -278,7 +275,7 @@ async def check_numeric_outliers(schema: dict):
             count = await fetch_value(f'SELECT COUNT(*) FROM {table_name} WHERE {column_name} < 0')
 
             if count > 0:
-                sample_rows = await get_sample_rows(table_name, schema, f'{column_name} < 0', [column_name])
+                sample_rows = await get_sample_rows(table_name, f'{column_name} < 0', [column_name])
                 findings.append(make_finding(
                     'negative_numeric_value',
                     table_name,
@@ -293,7 +290,7 @@ async def check_numeric_outliers(schema: dict):
             count = await fetch_value(f'SELECT COUNT(*) FROM {table_name} WHERE {column_name} = 0')
 
             if count > 0:
-                sample_rows = await get_sample_rows(table_name, schema, f'{column_name} = 0', [column_name])
+                sample_rows = await get_sample_rows(table_name, f'{column_name} = 0', [column_name])
                 findings.append(make_finding(
                     'non_positive_numeric_value',
                     table_name,
@@ -309,7 +306,7 @@ async def check_numeric_outliers(schema: dict):
             count = await fetch_value(f'SELECT COUNT(*) FROM {table_name} WHERE {condition}')
 
             if count > 0:
-                sample_rows = await get_sample_rows(table_name, schema, condition, [column_name])
+                sample_rows = await get_sample_rows(table_name, condition, [column_name])
                 findings.append(make_finding(
                     'invalid_car_year',
                     table_name,
@@ -347,7 +344,7 @@ async def check_numeric_outliers(schema: dict):
         count = await fetch_value(f'SELECT COUNT(*) FROM {table_name} WHERE {condition}')
 
         if count > 0:
-            sample_rows = await get_sample_rows(table_name, schema, condition, [column_name])
+            sample_rows = await get_sample_rows(table_name, condition, [column_name])
             findings.append(make_finding(
                 'iqr_numeric_outlier',
                 table_name,
@@ -396,7 +393,6 @@ async def check_categorical_anomalies(schema: dict):
             # Для сохранения finding нужны конкретные строки, а не только список значений
             sample_rows = await get_sample_rows(
                 table_name,
-                schema,
                 f'''
                 {column_name} IS NOT NULL
                     AND {clean_column_sql} <> ''
@@ -435,7 +431,6 @@ async def check_categorical_anomalies(schema: dict):
             # Берем примеры строк с редкими значениями, чтобы потом был row_id/kolesa_id
             sample_rows = await get_sample_rows(
                 table_name,
-                schema,
                 f'''
                 {column_name} IS NOT NULL
                     AND {clean_column_sql} <> ''
@@ -489,7 +484,6 @@ async def check_duplicates(table_name: str):
             # Для дублей сохраняем сами объявления, а агрегат остается в details
             sample_rows = await get_sample_rows(
                 table_name,
-                {'table_name': table_name},
                 f'''
                 {column_name} IN (
                     SELECT {column_name}
@@ -586,7 +580,6 @@ async def check_logic_rules(schema: dict):
         if count > 0:
             sample_rows = await get_sample_rows(
                 table_name,
-                schema,
                 rule['condition'],
                 rule['columns'],
             )

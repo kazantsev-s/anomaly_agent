@@ -49,7 +49,6 @@ INTERNAL_TABLES = {
     'agent_findings',
     'evaluation_results',
     'anomaly_detection_matches',
-    'model_price_catalog',
 }
 
 DATA_TABLES = {'kolesa'} | {table_name for table_name, _ in TEST_CSV_TABLES}
@@ -387,11 +386,10 @@ async def save_analysis_run(run_data: dict):
                 model_provider,
                 model_name,
                 prompt_version,
-                code_version,
                 status,
                 metadata
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10::jsonb)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb)
             RETURNING id
             ''',
             run_data.get('test_id'),
@@ -401,7 +399,6 @@ async def save_analysis_run(run_data: dict):
             run_data.get('model_provider', 'openai'),
             run_data['model_name'],
             run_data.get('prompt_version'),
-            run_data.get('code_version'),
             run_data.get('status', 'started'),
             json.dumps(run_data.get('metadata', {}), ensure_ascii=False, default=str),
         )
