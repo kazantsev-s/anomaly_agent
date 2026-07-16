@@ -19,6 +19,7 @@ class Settings:
         self.kolesa_csv_path = os.getenv('KOLESA_CSV_PATH')
         self.openai_api_key = os.getenv('OPENAI_API_KEY')
         self.openai_model = os.getenv('OPENAI_MODEL', 'gpt-5.5')
+        self.ask_sql_query_limit = int(os.getenv('ASK_SQL_QUERY_LIMIT', '3'))
         self.analyze_default_table = os.getenv('ANALYZE_DEFAULT_TABLE', 'kolesa')
         self.analyze_max_custom_check_iterations = int(os.getenv('ANALYZE_MAX_CUSTOM_CHECK_ITERATIONS'))
         self.analyze_custom_sql_per_iteration_limit = int(os.getenv('ANALYZE_CUSTOM_SQL_PER_ITERATION_LIMIT'))

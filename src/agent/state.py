@@ -3,8 +3,9 @@ from typing import Any, TypedDict
 # Описание состояния/памяти агента
 class AskAgentState(TypedDict, total=False):
     prompt: str
-    sql_query: str
-    sql_result: str
+    sql_queries: list[dict[str, str]]
+    sql_results: list[dict[str, Any]]
+    current_sql_query_index: int
     answer: str
 
 
