@@ -9,6 +9,9 @@ services:
     environment:
       POSTGRES_HOST: db
       POSTGRES_PORT: "5432"
+      LOG_FILE: local/logs/logs.log
+    volumes:
+      - ./local/logs:/app/local/logs
     networks:
       - anomaly-agent
 
